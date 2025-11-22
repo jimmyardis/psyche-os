@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio-Cybernetic Psyche Visualization v8</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000000; color: white; font-family: 'Courier New', Courier, monospace; }
+        #canvas-container { width: 100vw; height: 100vh; }
+        
+        /* UI OVERLAYS */
+        #ui-layer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            pointer-events: none;
+            z-index: 10;
+            transition: opacity 0.5s;
+        }
+        #return-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid #64ffda;
+            color: #64ffda;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            cursor: pointer;
+            pointer-events: auto;
+            display: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+        }
+        #return-btn:hover {
+            background: rgba(100, 255, 218, 0.2);
+        }
+
+        /* HOLOGRAPHIC HUD */
+        #hud-panel {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            width: 300px;
+            background: rgba(0, 5, 10, 0.85);
+            border-left: 4px solid #64ffda;
+            padding: 20px;
+            display: none;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            transform: perspective(1000px) rotateY(10deg);
+            transform-origin: left center;
+        }
+        .hud-line {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .hud-label { font-size: 0.8rem; color: #aaa; }
+        .hud-value { font-size: 0.9rem; font-weight: bold; color: #fff; }
+        .hud-title {
+            font-size: 1.2rem;
+            color: #64ffda;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #64ffda;
+            padding-bottom: 5px;
+            text-shadow: 0 0 10px rgba(100,255,218,0.5);
+        }
+        .bar-container {
+            width: 100%; height: 4px; background: #111; margin-top: 5px;
+        }
+        .bar-fill {
+            height: 100%; background: #64ffda; width: 0%; transition: width 1s;
+            box-shadow: 0 0 10px #64ffda;
+        }
+
+        /* CURSOR */
+        #cursor-target {
+            position: absolute;
+            width: 40px; height: 40px;
+            border: 1px dashed rgba(255,255,255,0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            display: none;
+            transition: all 0.2s;
+            z-index: 5;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #64ffda;
+            font-size: 24px;
+            animation: pulse 0.5s infinite;
+            font-weight: bold;
+            text-shadow: 0 0 15px #64ffda;
+            text-align: center;
+        }
+        @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+
+    <!-- Three.js Core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Post Processing Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <!-- Tweening for smooth camera -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+</head>
+<body>
+
+    <div id="ui-layer">
+        <h1 style="margin: 0; font-size: 1.5rem; color: #64ffda; text-shadow: 0 0 10px rgba(100, 255, 218, 0.5);">NEURAL MANIFOLD v8</h1>
+        <p style="margin: 5px 0; opacity: 0.7; font-size: 0.8rem;">Density: High // Proximity: Close</p>
+    </div>
+
+    <button id="return-btn" onclick="resetView()">RETURN TO MACRO VIEW</button>
+
+    <div id="hud-panel">
+        <div class="hud-title" id="hud-name">SYSTEM NAME</div>
+        
+        <div class="hud-line">
+            <span class="hud-label">ROLE</span>
+            <span class="hud-value" id="hud-role">MANAGER</span>
+        </div>
+        
+        <div class="hud-line">
+            <span class="hud-label">INTEGRITY</span>
+            <span class="hud-value" id="hud-integrity">98.4%</span>
+        </div>
+        <div class="bar-container"><div class="bar-fill" id="bar-integrity"></div></div>
+        
+        <div style="height: 10px;"></div>
+
+        <div class="hud-line">
+            <span class="hud-label">NEURAL LOAD</span>
+            <span class="hud-value" id="hud-load">LOW</span>
+        </div>
+        <div class="bar-container"><div class="bar-fill" id="bar-load" style="background: #ff4d4d;"></div></div>
+
+        <div style="margin-top: 15px; font-size: 0.7rem; color: #666; font-style: italic;">
+            > Subroutine A: ACTIVE<br>
+            > Memory Access: SECURE<br>
+            > Logic Gates: CLOSED
+        </div>
+    </div>
+
+    <div id="cursor-target"></div>
+    <div id="loading">RECALIBRATING SPATIAL DENSITY...<br><span style="font-size: 12px; opacity: 0.7">Compacting Neural Clusters</span></div>
+    <div id="canvas-container"></div>
+
+    <script>
+        // --- CONFIG ---
+        const CONFIG = {
+            bloomStrength: 1.5,
+            bloomRadius: 0.4,
+            bloomThreshold: 0.1
+        };
+
+        // --- TEXTURE CACHE ---
+        const textureCache = {};
+        function createNumberTexture(num, color) {
+            const key = `${num}-${color.getHexString()}`;
+            if (textureCache[key]) return textureCache[key];
+            const canvas = document.createElement('canvas');
+            canvas.width = 64; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            // Brighter for bloom
+            ctx.fillStyle = `rgba(${color.r*255},${color.g*255},${color.b*255}, 1.0)`;
+            ctx.font = 'bold 50px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = ctx.fillStyle;
+            ctx.shadowBlur = 10;
+            ctx.fillText(num, 32, 32);
+            const texture = new THREE.CanvasTexture(canvas);
+            textureCache[key] = texture;
+            return texture;
+        }
+
+        // --- SCENE SETUP ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x000000, 0.002); // Deep black fog
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 4000);
+        camera.position.set(0, 100, 200);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: false }); // Antialias false for bloom perf
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio); // High DPI
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.1;
+        controls.maxDistance = 1000;
+
+        // --- POST PROCESSING ---
+        const renderScene = new THREE.RenderPass(scene, camera);
+        
+        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.threshold = CONFIG.bloomThreshold;
+        bloomPass.strength = CONFIG.bloomStrength;
+        bloomPass.radius = CONFIG.bloomRadius;
+
+        const composer = new THREE.EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+
+        // --- LIGHTING ---
+        const ambientLight = new THREE.AmbientLight(0x222222);
+        scene.add(ambientLight);
+        // Central Sun
+        const centerLight = new THREE.PointLight(0xffffff, 2, 500);
+        scene.add(centerLight);
+
+        // --- CLASSES ---
+
+        class ToroidalParticleFlow {
+            constructor(parentGroup, torusRadius, tubeRadius, colorObj, flowType, isBinaryMode) {
+                this.group = new THREE.Group();
+                parentGroup.add(this.group);
+                this.particles = [];
+                const particleCount = 80; 
+
+                let material0, material1;
+                if (flowType === 'numbers' || isBinaryMode) {
+                    material0 = new THREE.SpriteMaterial({ map: createNumberTexture('0', colorObj), transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending });
+                    material1 = new THREE.SpriteMaterial({ map: createNumberTexture('1', colorObj), transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending });
+                }
+
+                const beadColors = [0xffffff, 0x888888];
+
+                for (let i = 0; i < particleCount; i++) {
+                    let particle;
+                    if (flowType === 'numbers' || isBinaryMode) {
+                        particle = new THREE.Sprite(Math.random() > 0.5 ? material0 : material1);
+                        const scale = isBinaryMode ? 0.5 : 0.8; 
+                        particle.scale.set(scale, scale, scale);
+                    } else {
+                        const c = beadColors[Math.floor(Math.random() * beadColors.length)];
+                        const mat = new THREE.MeshBasicMaterial({ color: new THREE.Color(c).lerp(colorObj, 0.8) });
+                        const geo = new THREE.SphereGeometry(0.2, 6, 6);
+                        particle = new THREE.Mesh(geo, mat);
+                    }
+                    particle.userData = {
+                        u: Math.random() * Math.PI * 2, v: Math.random() * Math.PI * 2, 
+                        speed: (0.005 + Math.random() * 0.01) * (isBinaryMode ? 2 : 1),
+                        torusRadius: torusRadius, tubeRadius: tubeRadius * (Math.random() * 0.8 + 0.2) 
+                    };
+                    this.updateParticlePosition(particle);
+                    this.group.add(particle);
+                    this.particles.push(particle);
+                }
+            }
+            updateParticlePosition(p) {
+                const u = p.userData.u; const v = p.userData.v;
+                const R = p.userData.torusRadius; const r = p.userData.tubeRadius;
+                p.position.x = (R + r * Math.cos(v)) * Math.cos(u);
+                p.position.y = (R + r * Math.cos(v)) * Math.sin(u);
+                p.position.z = r * Math.sin(v);
+            }
+            update() {
+                this.particles.forEach(p => {
+                    p.userData.u += p.userData.speed; 
+                    this.updateParticlePosition(p);
+                });
+            }
+        }
+
+        class BioGyro {
+            constructor(position, colorHex, size, isBinarySource = false) {
+                this.group = new THREE.Group();
+                this.group.position.copy(position);
+                this.colorObj = new THREE.Color(colorHex);
+                this.rings = [];
+                this.flows = [];
+
+                // Core Nucleus (Target for Raycasting)
+                const coreGeo = new THREE.IcosahedronGeometry(size * 0.8, 1); // Bigger for bloom
+                const coreMat = new THREE.MeshBasicMaterial({ 
+                    color: this.colorObj, wireframe: true, transparent: true, opacity: 0.5
+                });
+                this.core = new THREE.Mesh(coreGeo, coreMat);
+                // Important: Add user data for interactions
+                this.core.userData = { type: 'gyro', parent: this }; 
+                this.group.add(this.core);
+
+                // Inner Glow Ball
+                const glowGeo = new THREE.SphereGeometry(size * 0.4, 16, 16);
+                const glowMat = new THREE.MeshBasicMaterial({ color: this.colorObj });
+                this.group.add(new THREE.Mesh(glowGeo, glowMat));
+
+                const flow1 = isBinarySource ? 'numbers' : 'numbers';
+                const flow2 = isBinarySource ? 'numbers' : 'beads';
+                
+                this.createRingAndFlow(size * 1.4, 0.3, 0.02, 0.01, flow1, isBinarySource);
+                this.createRingAndFlow(size * 2.0, 0.25, 0.01, -0.02, flow2, isBinarySource);
+                this.createRingAndFlow(size * 2.8, 0.22, -0.02, 0.01, flow1, isBinarySource);
+
+                scene.add(this.group);
+            }
+
+            createRingAndFlow(radius, tube, rotX, rotY, flowType, isBinaryMode) {
+                const geometry = new THREE.TorusGeometry(radius, tube, 16, 50);
+                const material = new THREE.MeshBasicMaterial({ 
+                    color: this.colorObj, transparent: true, opacity: 0.1, wireframe: true
+                });
+                const ringMesh = new THREE.Mesh(geometry, material);
+                ringMesh.userData = { rotX, rotY };
+                
+                const flow = new ToroidalParticleFlow(ringMesh, radius, tube, this.colorObj, flowType, isBinaryMode);
+                this.flows.push(flow);
+                this.rings.push(ringMesh);
+                this.group.add(ringMesh);
+            }
+
+            update(time) {
+                this.core.rotation.y += 0.02;
+                this.core.rotation.x += 0.01;
+                this.rings.forEach((ring, i) => {
+                    ring.rotation.x += ring.userData.rotX;
+                    ring.rotation.y += ring.userData.rotY;
+                    this.flows[i].update(); 
+                });
+                this.group.position.y += Math.sin(time + this.group.position.x) * 0.03;
+            }
+        }
+
+        class NeuralPathway {
+            constructor(startVec, endVec, colorHex, flowType, isBinaryMode = false, thickness = 1.0) {
+                this.colorObj = new THREE.Color(colorHex);
+                const mid = new THREE.Vector3().addVectors(startVec, endVec).multiplyScalar(0.5);
+                mid.y += startVec.distanceTo(endVec) * 0.25;
+                mid.x += (Math.random() - 0.5) * 5; mid.z += (Math.random() - 0.5) * 5;
+                
+                this.curve = new THREE.CatmullRomCurve3([startVec, mid, endVec]);
+                this.curveLength = this.curve.getLength();
+                this.thickness = thickness;
+                this.baseRadius = 0.6 * thickness;
+
+                // Tube Geometry
+                this.geometry = new THREE.TubeGeometry(this.curve, 64, this.baseRadius, 8, false);
+                const material = new THREE.MeshPhongMaterial({ 
+                    color: this.colorObj, transparent: true, opacity: 0.15, wireframe: false, side: THREE.DoubleSide, shininess: 100
+                });
+                this.mesh = new THREE.Mesh(this.geometry, material);
+                scene.add(this.mesh);
+
+                // Create Internal Helix & Particles (Simplified from previous version for brevity, keeping visual impact)
+                this.createInternalHelix();
+                this.createParticles(flowType, isBinaryMode);
+            }
+
+            createInternalHelix() {
+                // Simplified helix creation
+                const points = this.curve.getSpacedPoints(60);
+                const curvePath = new THREE.CatmullRomCurve3(points); // Just use center line for glow
+                const geo = new THREE.TubeGeometry(curvePath, 60, 0.1 * this.thickness, 6, false);
+                const mat = new THREE.MeshBasicMaterial({ color: this.colorObj });
+                scene.add(new THREE.Mesh(geo, mat));
+            }
+
+            createParticles(flowType, isBinaryMode) {
+                this.particles = [];
+                const particleCount = Math.floor(60 * this.thickness); 
+                let numMat0, numMat1;
+                if (flowType === 'numbers' || isBinaryMode) {
+                    numMat0 = new THREE.SpriteMaterial({ map: createNumberTexture('0', this.colorObj), transparent: true, blending: THREE.AdditiveBlending });
+                    numMat1 = new THREE.SpriteMaterial({ map: createNumberTexture('1', this.colorObj), transparent: true, blending: THREE.AdditiveBlending });
+                }
+                for(let i=0; i<particleCount; i++) {
+                    let p;
+                    if (flowType === 'numbers' || isBinaryMode) {
+                        p = new THREE.Sprite(Math.random() > 0.5 ? numMat0 : numMat1);
+                        const scale = (isBinaryMode ? 0.4 : 0.7) * this.thickness; 
+                        p.scale.set(scale, scale, scale);
+                    } else {
+                        const geo = new THREE.SphereGeometry(0.2 * this.thickness, 6, 6);
+                        p = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color: this.colorObj}));
+                    }
+                    scene.add(p);
+                    this.particles.push({
+                        mesh: p, offset: Math.random(), speed: 0.001 + Math.random() * 0.003 * (isBinaryMode ? 3 : 1),
+                        radialOffset: new THREE.Vector3((Math.random()-0.5)*0.8*this.thickness, (Math.random()-0.5)*0.8*this.thickness, 0)
+                    });
+                }
+            }
+
+            update(time) {
+                // Pulse effect on tube
+                const pulse = 1 + Math.sin(time * 3) * 0.1;
+                this.mesh.scale.set(pulse, pulse, pulse);
+
+                this.particles.forEach(p => {
+                    p.offset += p.speed;
+                    if(p.offset > 1) p.offset = 0;
+                    const point = this.curve.getPoint(p.offset);
+                    const tangent = this.curve.getTangent(p.offset).normalize();
+                    const axis = new THREE.Vector3(0, 1, 0).cross(tangent).normalize();
+                    const finalPos = point.clone().add(axis.multiplyScalar(p.radialOffset.x)).add(new THREE.Vector3(0,1,0).multiplyScalar(p.radialOffset.y));
+                    p.mesh.position.copy(finalPos);
+                });
+            }
+        }
+
+        // --- GENERATION ---
+        const gyros = []; const pathways = []; const macroSystems = [];
+
+        const BASE_VECTORS = {
+            self: new THREE.Vector3(0, 0, 0),
+            mgr: new THREE.Vector3(-10, 7, -4),
+            fire: new THREE.Vector3(10, 5, 4),
+            exile: new THREE.Vector3(0, -9, 0),
+            critic: new THREE.Vector3(-8, -5, 8)
+        };
+
+        function createPsycheSystem(offset, palette, label, role) {
+            const O = new THREE.Vector3(offset.x, offset.y, offset.z);
+            const SCALE = 1; 
+
+            const posSelf = new THREE.Vector3().copy(BASE_VECTORS.self).multiplyScalar(SCALE).add(O);
+            const posMgr = new THREE.Vector3().copy(BASE_VECTORS.mgr).multiplyScalar(SCALE).add(O);
+            const posFire = new THREE.Vector3().copy(BASE_VECTORS.fire).multiplyScalar(SCALE).add(O);
+            const posExile = new THREE.Vector3().copy(BASE_VECTORS.exile).multiplyScalar(SCALE).add(O);
+            const posCritic = new THREE.Vector3().copy(BASE_VECTORS.critic).multiplyScalar(SCALE).add(O);
+
+            const gSelf = new BioGyro(posSelf, palette.self, 2.0);
+            // Add metadata to the "Mega Center" for interaction
+            gSelf.core.userData = { type: 'mega-center', label: label, role: role, palette: palette, pos: posSelf };
+
+            const gMgr = new BioGyro(posMgr, palette.mgr, 1.5);
+            const gFire = new BioGyro(posFire, palette.fire, 1.5, true); 
+            const gExile = new BioGyro(posExile, palette.exile, 1.3);
+            const gCritic = new BioGyro(posCritic, palette.critic, 1.2);
+
+            gyros.push(gSelf, gMgr, gFire, gExile, gCritic);
+
+            pathways.push(new NeuralPathway(posSelf, posMgr, palette.mgr, 'numbers'));
+            pathways.push(new NeuralPathway(posSelf, posExile, palette.exile, 'beads'));
+            pathways.push(new NeuralPathway(posMgr, posExile, 0x5555ff, 'numbers'));
+            pathways.push(new NeuralPathway(posFire, posExile, palette.fire, 'beads', true));
+            pathways.push(new NeuralPathway(posCritic, posMgr, palette.critic, 'numbers'));
+
+            return { center: posSelf, selfNode: gSelf, palette: palette };
+        }
+
+        // --- MAIN GEOMETRY CONFIG ---
+        // Reduced from 5.5 to 3.5 to bring structures closer
+        const MEGA_SCALE = 3.5;
+
+        // 1. MEGA-SELF 
+        const sysSelf = createPsycheSystem(BASE_VECTORS.self.clone().multiplyScalar(MEGA_SCALE), {
+            self: 0x00ff9d, mgr: 0x00d2ff, fire: 0xff4d4d, exile: 0xc77dff, critic: 0xffbd2e
+        }, "MEGA-CORE", "PRIMARY CONSCIOUSNESS");
+
+        // 2. MEGA-MANAGER
+        const sysMgr = createPsycheSystem(BASE_VECTORS.mgr.clone().multiplyScalar(MEGA_SCALE), {
+            self: 0x00d2ff, mgr: 0x00ffff, fire: 0x0055ff, exile: 0x5500aa, critic: 0x88ccff
+        }, "DEFENSE MATRIX", "STRATEGIC CONTROL");
+
+        // 3. MEGA-FIREFIGHTER
+        const sysFire = createPsycheSystem(BASE_VECTORS.fire.clone().multiplyScalar(MEGA_SCALE), {
+            self: 0xff4d4d, mgr: 0xff8800, fire: 0xff0000, exile: 0xaa0000, critic: 0xffaa00
+        }, "REACTOR CORE", "EMERGENCY RESPONSE");
+
+        // 4. MEGA-EXILE
+        const sysExile = createPsycheSystem(BASE_VECTORS.exile.clone().multiplyScalar(MEGA_SCALE), {
+            self: 0xc77dff, mgr: 0x8800ff, fire: 0xff00ff, exile: 0x4b0082, critic: 0xaa88ff
+        }, "MEMORY VAULT", "REPRESSED ARCHIVE");
+
+        // 5. MEGA-CRITIC
+        const sysCritic = createPsycheSystem(BASE_VECTORS.critic.clone().multiplyScalar(MEGA_SCALE), {
+            self: 0xffbd2e, mgr: 0xffff00, fire: 0xffaa00, exile: 0x888800, critic: 0xffffff
+        }, "LOGIC GATE", "ERROR CORRECTION");
+
+        // MEGA-CONNECTORS
+        const THICK = 2.5;
+        pathways.push(new NeuralPathway(sysSelf.center, sysMgr.center, sysMgr.palette.self, 'numbers', false, THICK));
+        pathways.push(new NeuralPathway(sysSelf.center, sysExile.center, sysExile.palette.self, 'beads', false, THICK));
+        pathways.push(new NeuralPathway(sysMgr.center, sysExile.center, 0x5555ff, 'numbers', false, THICK));
+        pathways.push(new NeuralPathway(sysFire.center, sysExile.center, sysFire.palette.self, 'beads', true, THICK));
+        pathways.push(new NeuralPathway(sysCritic.center, sysMgr.center, sysCritic.palette.self, 'numbers', false, THICK));
+
+        // Starfield
+        const starsGeo = new THREE.BufferGeometry();
+        const starsCnt = 2000;
+        const starsPos = new Float32Array(starsCnt * 3);
+        for(let i=0; i<starsCnt*3; i++) starsPos[i] = (Math.random() - 0.5) * 600;
+        starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
+        const starsMat = new THREE.PointsMaterial({color: 0x888888, size: 0.5, transparent: true, opacity: 0.5});
+        scene.add(new THREE.Points(starsGeo, starsMat));
+
+        // --- INTERACTION LOGIC ---
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const cursorTarget = document.getElementById('cursor-target');
+        const hudPanel = document.getElementById('hud-panel');
+        let hoveredObj = null;
+        let isFocusMode = false;
+        let originalCameraPos = new THREE.Vector3(0, 80, 160);
+
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            // Move cursor UI
+            cursorTarget.style.left = event.clientX + 'px';
+            cursorTarget.style.top = event.clientY + 'px';
+        });
+
+        window.addEventListener('click', () => {
+            if (hoveredObj && !isFocusMode) {
+                focusOnCluster(hoveredObj);
+            }
+        });
+
+        function focusOnCluster(obj) {
+            isFocusMode = true;
+            controls.autoRotate = false;
+            
+            const targetPos = obj.userData.pos;
+            
+            // Animate Camera
+            gsap.to(camera.position, {
+                x: targetPos.x + 30,
+                y: targetPos.y + 20,
+                z: targetPos.z + 30,
+                duration: 2,
+                ease: "power2.inOut"
+            });
+            gsap.to(controls.target, {
+                x: targetPos.x,
+                y: targetPos.y,
+                z: targetPos.z,
+                duration: 2,
+                ease: "power2.inOut"
+            });
+
+            // Update HUD
+            document.getElementById('hud-name').innerText = obj.userData.label;
+            document.getElementById('hud-name').style.color = '#' + obj.userData.palette.self.toString(16);
+            document.getElementById('hud-role').innerText = obj.userData.role;
+            document.getElementById('bar-integrity').style.width = Math.floor(Math.random()*30 + 70) + '%';
+            document.getElementById('bar-integrity').style.backgroundColor = '#' + obj.userData.palette.self.toString(16);
+            document.getElementById('bar-load').style.width = Math.floor(Math.random()*60 + 20) + '%';
+            
+            // Show UI
+            hudPanel.style.display = 'block';
+            document.getElementById('return-btn').style.display = 'block';
+            document.getElementById('ui-layer').style.opacity = '0'; // Hide main title
+        }
+
+        window.resetView = function() {
+            isFocusMode = false;
+            controls.autoRotate = true;
+            
+            gsap.to(camera.position, {
+                x: originalCameraPos.x,
+                y: originalCameraPos.y,
+                z: originalCameraPos.z,
+                duration: 2,
+                ease: "power2.inOut"
+            });
+            gsap.to(controls.target, {
+                x: 0, y: 0, z: 0,
+                duration: 2,
+                ease: "power2.inOut"
+            });
+
+            hudPanel.style.display = 'none';
+            document.getElementById('return-btn').style.display = 'none';
+            document.getElementById('ui-layer').style.opacity = '1';
+        };
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('cursor-target').style.display = 'block';
+
+        // --- ANIMATION LOOP ---
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = clock.getElapsedTime();
+            controls.update();
+
+            // Raycasting
+            if (!isFocusMode) {
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(scene.children, true);
+                
+                // Filter for Mega-Centers
+                const hit = intersects.find(i => i.object.userData.type === 'mega-center');
+                
+                if (hit) {
+                    document.body.style.cursor = 'pointer';
+                    cursorTarget.style.borderColor = '#64ffda';
+                    cursorTarget.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                    hoveredObj = hit.object;
+                } else {
+                    document.body.style.cursor = 'default';
+                    cursorTarget.style.borderColor = 'rgba(255,255,255,0.5)';
+                    cursorTarget.style.transform = 'translate(-50%, -50%) scale(1)';
+                    hoveredObj = null;
+                }
+            }
+
+            // Entity Updates
+            gyros.forEach(g => g.update(time));
+            pathways.forEach(p => p.update(time));
+
+            // Render with Bloom
+            composer.render();
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html>
