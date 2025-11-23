@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<!DOCTYPE html>harset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Psyche Architect</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script c
+<html lang="en">
+<head>
+    <meta crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
 </head>
@@ -17,14 +17,344 @@
         const { Folder, FileCode, GitBranch, Share2, ChevronRight, ChevronDown, Activity, Shield, Zap, Heart, Lock, AlertCircle } = lucide;
         const { useState } = React;
 
-        // --- PASTE THE CONTENT OF psyche_architect_view.jsx BELOW THIS LINE ---
-
         const PsycheArchitect = () => {
-             // ... Paste the full component code here
-             return <div>Paste full code from previous response here</div>;
-        };
+          const [expandedFolders, setExpandedFolders] = useState(['root', 'sys-core']);
+          const [activeFile, setActiveFile] = useState('sys-core-main');
 
-        // --- END PASTE ---
+          const toggleFolder = (id) => {
+            setExpandedFolders(prev => 
+              prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
+            );
+          };
+
+          const systems = [
+            {
+              id: 'sys-core',
+              name: 'MEGA-SELF (Primary Consciousness)',
+              icon: <Heart className="w-4 h-4 text-emerald-400" />,
+              color: 'text-emerald-400',
+              files: [
+                { id: 'sys-core-main', name: 'observer_state.ts', type: 'typescript' },
+                { id: 'sys-core-deps', name: 'connection_map.json', type: 'json' }
+              ]
+            },
+            {
+              id: 'sys-mgr',
+              name: 'MEGA-MANAGER (Defense Matrix)',
+              icon: <Shield className="w-4 h-4 text-cyan-400" />,
+              color: 'text-cyan-400',
+              files: [
+                { id: 'sys-mgr-logic', name: 'proactive_control.py', type: 'python' },
+                { id: 'sys-mgr-rules', name: 'social_contracts.yml', type: 'yaml' }
+              ]
+            },
+            {
+              id: 'sys-fire',
+              name: 'MEGA-FIREFIGHTER (Reactor)',
+              icon: <Zap className="w-4 h-4 text-red-400" />,
+              color: 'text-red-400',
+              files: [
+                { id: 'sys-fire-override', name: 'emergency_protocol.cpp', type: 'cpp' },
+                { id: 'sys-fire-stim', name: 'dopamine_injector.sh', type: 'shell' }
+              ]
+            },
+            {
+              id: 'sys-exile',
+              name: 'MEGA-EXILE (Memory Vault)',
+              icon: <Lock className="w-4 h-4 text-purple-400" />,
+              color: 'text-purple-400',
+              files: [
+                { id: 'sys-exile-data', name: 'repressed_memories.db', type: 'database' },
+                { id: 'sys-exile-log', name: 'pain_logs.txt', type: 'text' }
+              ]
+            },
+            {
+              id: 'sys-critic',
+              name: 'MEGA-CRITIC (Logic Gate)',
+              icon: <AlertCircle className="w-4 h-4 text-yellow-400" />,
+              color: 'text-yellow-400',
+              files: [
+                { id: 'sys-critic-scan', name: 'error_detection.js', type: 'javascript' },
+                { id: 'sys-critic-comp', name: 'comparison_engine.go', type: 'go' }
+              ]
+            }
+          ];
+
+          const codeContent = {
+            'sys-core-main': `// CONTEXT: Primary Consciousness
+        // ROLE: Orchestrator & Healer
+
+        import { Compassion, Curiosity } from '@soul/qualities';
+        import { Manager } from '../sys-mgr';
+        import { Firefighter } from '../sys-fire';
+        import { Exile } from '../sys-exile';
+
+        export class MegaSelf {
+          constructor() {
+            this.state = 'UNBLENDED';
+            this.energy = Infinity;
+          }
+
+          monitorSystem() {
+            // Relationship: Leadership
+            // If Managers are tired, Self steps in to relieve burden
+            if (Manager.stress > 80) {
+              this.connect(Manager, { mode: 'APPRECIATION' });
+            }
+
+            // Relationship: Healing
+            // If Exile is leaking pain, Self provides containment
+            if (Exile.isLeaking()) {
+              this.witness(Exile); 
+              // ^ Direct connection, no repression
+            }
+          }
+        }`,
+            'sys-mgr-logic': `# CONTEXT: Strategic Control
+        # ROLE: Prevent activation of Exile system
+
+        from sys_exile import Pain
+        from sys_critic import judgment_feed
+
+        class DefenseMatrix:
+            def __init__(self):
+                self.vigilance = HIGH
+            
+            def on_cycle_start(self):
+                # Relationship: Input
+                # Receives threat data from Critic
+                threats = judgment_feed.scan_environment()
+                
+                if threats.exist():
+                    self.tighten_control()
+                    
+                # Relationship: Suppression
+                # Actively blocks access to Memory Vault
+                if Pain.pressure > SAFE_LIMIT:
+                    self.distract(method="WORKAHOLISM")
+                    return "DANGER_AVOIDED"
+        `,
+            'sys-fire-override': `// CONTEXT: Emergency Response
+        // ROLE: Extinguish pain at all costs
+
+        #include <sys/override.h>
+        #include <bio/chemistry.h>
+
+        void EmergencyProtocol::Execute(float painLevel) {
+            // Relationship: Override
+            // Bypasses Manager logic if pain is too high
+            if (painLevel > CRITICAL_THRESHOLD) {
+                System::Shutdown(LOGIC_GATES); // Disables Critic
+                System::Shutdown(PLANNING);    // Disables Manager
+                
+                // Relationship: Reaction
+                // Floods system to numb the Exile
+                Chemistry::Inject(DOPAMINE, MAX_DOSE);
+                
+                std::cout << "CONTROL OVERRIDDEN. SYSTEM NUMBED." << std::endl;
+            }
+        }`,
+            'sys-exile-data': `-- CONTEXT: The Wound
+        -- ROLE: Holder of Burden
+
+        SELECT * FROM memories 
+        WHERE status = 'REPRESSED' 
+        AND intensity = 'HIGH';
+
+        /* RELATIONSHIP MAP:
+           <- BLOCKED BY: Mega-Manager (Firewall)
+           <- NUMBED BY: Mega-Firefighter (Flood)
+           -> SENDS: Pain Signals -> Self (Seeking Validation)
+        */
+
+        -- DATA INTEGRITY: FRAGILE
+        -- ACCESS LEVEL: ROOT ONLY (Self)
+        `,
+            'sys-critic-scan': `/**
+         * CONTEXT: Error Correction
+         * ROLE: Pre-emptive Analysis
+         */
+
+        const Manager = require('../sys-mgr');
+
+        function scanForSocialThreats(behavior) {
+          // Relationship: Feeder
+          // Feeds anxiety data into the Manager
+          
+          if (behavior.isImperfect()) {
+            const shame = calculateRisk(behavior);
+            
+            // Sends warning signal
+            Manager.alert({
+              level: 'HIGH',
+              message: 'DO NOT SAY THAT, THEY WILL JUDGE US.'
+            });
+          }
+        }
+        `
+          };
+
+          const getSyntaxColor = (line) => {
+            if (line.trim().startsWith('//') || line.trim().startsWith('#') || line.trim().startsWith('--')) return 'text-slate-500 italic';
+            if (line.includes('import') || line.includes('from') || line.includes('include')) return 'text-pink-400';
+            if (line.includes('class') || line.includes('function') || line.includes('void')) return 'text-purple-400';
+            if (line.includes('if') || line.includes('return') || line.includes('else')) return 'text-cyan-400';
+            if (line.includes('Relationship:')) return 'text-yellow-300 font-bold bg-yellow-500/10 px-1 rounded';
+            return 'text-slate-300';
+          };
+
+          return (
+            <div className="flex h-screen bg-[#0d1117] text-slate-300 font-mono text-sm overflow-hidden">
+              
+              {/* Sidebar: File Explorer */}
+              <div className="w-80 border-r border-slate-800 flex flex-col bg-[#010409]">
+                <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+                  <span className="font-bold tracking-widest text-xs text-slate-400">PSYCHE_EXPLORER</span>
+                  <GitBranch className="w-4 h-4 text-slate-500" />
+                </div>
+                
+                <div className="flex-1 overflow-y-auto p-2">
+                  <div 
+                    className="flex items-center gap-2 px-2 py-1 text-slate-400 cursor-pointer hover:text-white"
+                    onClick={() => toggleFolder('root')}
+                  >
+                    {expandedFolders.includes('root') ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                    <Folder className="w-4 h-4 text-blue-400" />
+                    <span className="font-bold">src / psyche_system</span>
+                  </div>
+
+                  {expandedFolders.includes('root') && (
+                    <div className="ml-4 border-l border-slate-800 pl-2 mt-1 space-y-1">
+                      {systems.map(sys => (
+                        <div key={sys.id}>
+                          <div 
+                            className={`flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer transition-colors
+                              ${expandedFolders.includes(sys.id) ? 'bg-slate-800/50' : 'hover:bg-slate-800/30'}
+                            `}
+                            onClick={() => toggleFolder(sys.id)}
+                          >
+                            {expandedFolders.includes(sys.id) ? <ChevronDown className="w-3 h-3 opacity-50" /> : <ChevronRight className="w-3 h-3 opacity-50" />}
+                            {sys.icon}
+                            <span className={`text-xs font-semibold ${sys.color}`}>{sys.name}</span>
+                          </div>
+
+                          {expandedFolders.includes(sys.id) && (
+                            <div className="ml-6 mt-1 space-y-0.5 mb-2">
+                              {sys.files.map(file => (
+                                <div 
+                                  key={file.id}
+                                  onClick={() => setActiveFile(file.id)}
+                                  className={`
+                                    flex items-center gap-2 px-2 py-1 rounded cursor-pointer text-xs
+                                    ${activeFile === file.id ? 'bg-slate-800 text-white' : 'text-slate-500 hover:text-slate-300'}
+                                  `}
+                                >
+                                  <FileCode className="w-3 h-3" />
+                                  {file.name}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                <div className="p-3 border-t border-slate-800 text-[10px] text-slate-600">
+                  git branch: fractal-integration-v8<br/>
+                  last commit: "deepened awareness"
+                </div>
+              </div>
+
+              {/* Main Content: Syntax Canvas */}
+              <div className="flex-1 flex flex-col">
+                {/* Tab Bar */}
+                <div className="flex bg-[#010409] border-b border-slate-800">
+                  {systems.flatMap(s => s.files).filter(f => f.id === activeFile).map(f => (
+                    <div key={f.id} className="px-4 py-2 bg-[#0d1117] border-r border-t border-t-emerald-500 border-slate-800 text-xs flex items-center gap-2">
+                      <FileCode className="w-3 h-3 text-emerald-500" />
+                      {f.name}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Code Editor Area */}
+                <div className="flex-1 p-6 overflow-auto bg-[#0d1117] relative">
+                  
+                  {/* Line Numbers */}
+                  <div className="absolute left-0 top-6 bottom-0 w-12 text-right pr-4 text-slate-700 text-xs select-none font-mono leading-6">
+                    {codeContent[activeFile] ? codeContent[activeFile].split('\n').map((_, i) => (
+                      <div key={i}>{i + 1}</div>
+                    )) : null}
+                  </div>
+
+                  {/* Code Content */}
+                  <div className="ml-12 font-mono text-sm leading-6">
+                    {codeContent[activeFile] ? (
+                      codeContent[activeFile].split('\n').map((line, i) => (
+                        <div key={i} className="whitespace-pre">
+                          <span dangerouslySetInnerHTML={{ __html: 
+                            line
+                              .replace(/class|function|interface|private|void|import|export|from|const|let|var/g, m => `<span class="text-pink-400">${m}</span>`)
+                              .replace(/if|else|return|switch|case/g, m => `<span class="text-cyan-400">${m}</span>`)
+                              .replace(/\/\/.*/g, m => `<span class="text-slate-500 italic">${m}</span>`)
+                              .replace(/#.*/g, m => `<span class="text-slate-500 italic">${m}</span>`)
+                              .replace(/Relationship:.*/g, m => `<span class="text-yellow-300 font-bold bg-yellow-900/30 px-1 rounded mx-1">${m}</span>`)
+                              .replace(/'[^']*'/g, m => `<span class="text-green-300">${m}</span>`)
+                              .replace(/"[^"]*"/g, m => `<span class="text-green-300">${m}</span>`)
+                              .replace(/MegaSelf|Manager|Firefighter|Exile|Critic|DefenseMatrix|EmergencyProtocol/g, m => `<span class="text-orange-300 font-bold">${m}</span>`)
+                          }} />
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full text-slate-600 opacity-50 mt-20">
+                        <Share2 className="w-16 h-16 mb-4" />
+                        <p>Select a file to view neural syntax</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right Sidebar: Relationship Mini-Graph */}
+              <div className="w-64 border-l border-slate-800 bg-[#010409] p-4 flex flex-col">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Dependency Graph</h3>
+                
+                <div className="flex-1 relative border border-slate-800 rounded bg-[#0d1117] overflow-hidden p-4">
+                  {/* Simple Visual Graph of the active node's connections */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                     <div className="relative w-full h-full">
+                        {/* Center Node (Current File Context) */}
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center border-2 border-white shadow-[0_0_15px_rgba(255,255,255,0.2)] z-10">
+                           <Activity className="w-6 h-6 text-white" />
+                        </div>
+                        
+                        {/* Connection Lines & Nodes (Mocked for visual context) */}
+                        <div className="absolute top-10 left-10 w-8 h-8 bg-blue-900/50 rounded-full border border-blue-500 flex items-center justify-center">
+                           <Shield className="w-3 h-3 text-blue-400" />
+                        </div>
+                        <div className="absolute bottom-10 right-10 w-8 h-8 bg-red-900/50 rounded-full border border-red-500 flex items-center justify-center">
+                           <Zap className="w-3 h-3 text-red-400" />
+                        </div>
+                        
+                        {/* SVG Lines */}
+                        <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                           <line x1="50%" y1="50%" x2="25%" y2="20%" stroke="#3b82f6" strokeWidth="1" strokeDasharray="4 2" />
+                           <line x1="50%" y1="50%" x2="75%" y2="80%" stroke="#ef4444" strokeWidth="1" strokeDasharray="4 2" />
+                        </svg>
+
+                        <div className="absolute bottom-2 left-2 text-[10px] text-slate-500">
+                          Visualizing: {activeFile} dependencies
+                        </div>
+                     </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          );
+        };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<PsycheArchitect />);
