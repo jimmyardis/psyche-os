@@ -9,7 +9,6 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         body { margin: 0; background-color: #020617; color: white; overflow: hidden; font-family: ui-sans-serif, system-ui, sans-serif; }
@@ -20,9 +19,6 @@
         @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .accretion-disk { animation: spin-slow 4s linear infinite; }
         .wormhole { background: conic-gradient(from 0deg, #06b6d4, #10b981, #06b6d4); filter: blur(4px); animation: spin-slow 8s linear infinite reverse; }
-        
-        /* Mindmap CSS */
-        .tree-line { position: absolute; background-color: #334155; z-index: 0; }
     </style>
 </head>
 <body>
@@ -31,7 +27,6 @@
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
-        const { Shield, Zap, Lock, Brain, Coins, Syringe, Layers, Network, Database } = lucide;
 
         // --- DATA ARCHITECTURE ---
         const systemData = {
@@ -59,11 +54,11 @@
         // 1. COSMIC CANVAS (Physics Engine)
         const CosmicCanvas = () => {
             const [parts, setParts] = useState(systemData.parts);
-            const [time, setTime] = useState(0); // For orbital mechanics
+            const [time, setTime] = useState(0);
             const requestRef = useRef();
 
             const updatePhysics = () => {
-                setTime(t => t + 0.02); // Increment time for orbits
+                setTime(t => t + 0.02); 
                 
                 setParts(currentParts => {
                     return currentParts.map(part => {
@@ -121,10 +116,8 @@
             return (
                 <div className="relative w-full h-full overflow-hidden select-none">
                     <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                        {/* Background & Voids */}
                         <rect width="100%" height="100%" fill="#020617" />
                         
-                        {/* Black Holes */}
                         {systemData.blackHoles.map(bh => (
                             <g key={bh.id}>
                                 <circle cx={bh.x} cy={bh.y} r={bh.radius * 1.5} fill={`url(#grad-${bh.id})`} opacity="0.6" className="accretion-disk"/>
@@ -136,7 +129,6 @@
                             </g>
                         ))}
 
-                        {/* Filaments */}
                         {systemData.filaments.map((f, i) => {
                             const s = parts.find(p => p.id === f.source);
                             const t = parts.find(p => p.id === f.target);
@@ -145,23 +137,19 @@
                         })}
                     </svg>
 
-                    {/* ATOMIC NODES (Seed of Life structure) */}
                     {parts.map(part => {
-                        const orbitRadius = 35; // Distance of satellites from core
+                        const orbitRadius = 35; 
                         return (
                             <div key={part.id} 
                                 onMouseDown={(e) => handleDragStart(part.id, e)}
                                 className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing z-10"
                                 style={{ left: part.x, top: part.y }}
                             >
-                                {/* Core Nucleus */}
                                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full z-20 shadow-[0_0_15px_rgba(255,255,255,0.2)]"
                                      style={{ backgroundColor: part.color }}>
                                 </div>
                                 
-                                {/* Orbiting Satellites (Memes) */}
                                 {part.satellites.map((meme, index) => {
-                                    // 6 points of a hexagon (Seed of life geometry)
                                     const angle = time * (part.isSelf ? 0.5 : 1.5) + (index * (Math.PI / 3));
                                     const sx = Math.cos(angle) * orbitRadius;
                                     const sy = Math.sin(angle) * orbitRadius;
@@ -175,7 +163,6 @@
                                                 transform: 'translate(-50%, -50%)'
                                             }}
                                         >
-                                            {/* Hover label for specific meme */}
                                             <div className="hidden group-hover:block absolute -top-6 text-[9px] bg-black text-white px-1 py-0.5 rounded whitespace-nowrap">
                                                 {meme}
                                             </div>
@@ -193,13 +180,12 @@
             );
         };
 
-        // 2. SCHEMA VIEW (Data Structure)
+        // 2. SCHEMA VIEW
         const SchemaView = () => (
             <div className="p-8 h-full overflow-y-auto bg-slate-900">
                 <h2 className="text-xl font-bold mb-6 text-indigo-400">Ontological Schema: The Fractal Psyche</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Level 1 */}
                     <div className="bg-slate-800 p-5 rounded-lg border border-slate-700">
                         <h3 className="text-lg font-bold text-amber-400 mb-2">1. The Macro (Fields)</h3>
                         <p className="text-sm text-slate-400 mb-4">Background radiation of the system. Sets the rules of gravity.</p>
@@ -210,7 +196,6 @@
                         </ul>
                     </div>
                     
-                    {/* Level 2 */}
                     <div className="bg-slate-800 p-5 rounded-lg border border-slate-700">
                         <h3 className="text-lg font-bold text-indigo-400 mb-2">2. The Meso (Memeplexes)</h3>
                         <p className="text-sm text-slate-400 mb-4">The "Parts". Atomic coalitions of behavioral patterns acting as an identity.</p>
@@ -221,7 +206,6 @@
                         </ul>
                     </div>
 
-                    {/* Level 3 */}
                     <div className="bg-slate-800 p-5 rounded-lg border border-slate-700">
                         <h3 className="text-lg font-bold text-emerald-400 mb-2">3. The Micro (Memes)</h3>
                         <p className="text-sm text-slate-400 mb-4">Hebbian neural assemblies. The electrons orbiting the core wound.</p>
@@ -250,22 +234,18 @@
             </div>
         );
 
-        // 3. MIND MAP VIEW (Hierarchy)
+        // 3. MIND MAP VIEW
         const MindMapView = () => (
             <div className="p-8 h-full flex items-center justify-center overflow-auto bg-slate-900">
-                {/* Simplified Flexbox Tree */}
                 <div className="flex flex-col items-center">
                     
-                    {/* Root */}
                     <div className="bg-white text-black px-6 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(255,255,255,0.3)] z-10">
                         The Organism (Self)
                     </div>
                     
                     <div className="w-px h-8 bg-slate-600"></div>
                     
-                    {/* Level 1: Memeplexes */}
                     <div className="flex gap-16 relative">
-                        {/* Connecting Line */}
                         <div className="absolute top-0 left-[10%] right-[10%] h-px bg-slate-600"></div>
 
                         {systemData.parts.map(part => (
@@ -276,7 +256,6 @@
                                     {part.name}
                                 </div>
                                 
-                                {/* Level 2: Memes */}
                                 <div className="flex flex-col gap-2 pl-4 border-l border-slate-700">
                                     {part.satellites.slice(0, 4).map((meme, i) => (
                                         <div key={i} className="flex items-center text-xs text-slate-400">
@@ -299,27 +278,25 @@
 
             return (
                 <div className="flex flex-col h-screen">
-                    {/* Header & Navigation */}
                     <div className="bg-slate-950 border-b border-slate-800 p-4 flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                            <Layers className="text-indigo-500" />
+                            <span className="text-2xl">🌌</span>
                             <h1 className="text-xl font-bold tracking-tight">Psyche-OS <span className="text-slate-500 text-sm font-normal">v2.0 Fractals</span></h1>
                         </div>
                         
                         <div className="flex gap-2">
                             <button className={`flex items-center gap-2 tab-btn ${activeTab === 'canvas' ? 'active' : ''}`} onClick={() => setActiveTab('canvas')}>
-                                <Network size={16} /> Cosmic Canvas
+                                ⚛️ Cosmic Canvas
                             </button>
                             <button className={`flex items-center gap-2 tab-btn ${activeTab === 'schema' ? 'active' : ''}`} onClick={() => setActiveTab('schema')}>
-                                <Database size={16} /> Data Schema
+                                🗄️ Data Schema
                             </button>
                             <button className={`flex items-center gap-2 tab-btn ${activeTab === 'mindmap' ? 'active' : ''}`} onClick={() => setActiveTab('mindmap')}>
-                                <Brain size={16} /> Mind Map
+                                🧠 Mind Map
                             </button>
                         </div>
                     </div>
 
-                    {/* Active View Container */}
                     <div className="flex-1 relative">
                         {activeTab === 'canvas' && <CosmicCanvas />}
                         {activeTab === 'schema' && <SchemaView />}
