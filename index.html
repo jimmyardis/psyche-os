@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Psyche-OS v5.0: The Clinical Baseline</title>
+    <title>Psyche-OS v6.0: The Unified Ecological Fractal</title>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -15,8 +15,7 @@
         .tab-btn { padding: 0.5rem 1rem; border-bottom: 2px solid transparent; transition: all 0.2s; cursor: pointer; color: #94a3b8; }
         .tab-btn.active { border-bottom-color: #6366f1; color: white; }
         @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .accretion-disk { animation: spin-slow 4s linear infinite; }
-        .wormhole { background: conic-gradient(from 0deg, #06b6d4, #10b981, #06b6d4); filter: blur(4px); animation: spin-slow 8s linear infinite reverse; }
+        .accretion-disk { animation: spin-slow 8s linear infinite; }
     </style>
 </head>
 <body>
@@ -26,42 +25,34 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- THE CLINICAL DATA ARCHITECTURE ---
-        // This is the "Blank Slate" ready for your personal data
+        // --- THE CLINICAL + ECOLOGICAL DATA ARCHITECTURE ---
         const systemData = {
-            // The Environmental Physics
-            blackHoles: [{ id: 'bh1', name: 'Dopaminergic Attractor (Addiction)', x: window.innerWidth - 200, y: window.innerHeight - 200, radius: 60, color: '#1e1b4b', eventHorizon: 100 }],
-            wormholes: [{ id: 'w1', name: 'Amygdala Hijack (System 1)', inX: 200, inY: window.innerHeight - 150, outX: window.innerWidth - 300, outY: window.innerHeight - 250, color: '#22d3ee' }],
-            memeplexes: [{ id: 'm1', name: 'Early Maladaptive Schema', x: 250, y: 200, color: '#fcd34d', radius: 180 }],
-            
-            // THE MACRO-SEED OF LIFE (1 Self, 6 Functional Subsystems)
-            // Satellites are the 6 channels of a Hebbian Engram
+            // TIER 0: THE EXTERNAL WORLD (Macro Systems)
+            macroSystems: [
+                { id: 'ext1', name: 'Vocation & Economy', angleOffset: 0, color: '#3b82f6', interface: 'p1' }, // Links to Executive
+                { id: 'ext2', name: 'Culture & Ideology', angleOffset: 1, color: '#ec4899', interface: 'p2' }, // Links to Evaluative
+                { id: 'ext3', name: 'Community & Tribe', angleOffset: 2, color: '#22c55e', interface: 'p3' }, // Links to Reactive
+                { id: 'ext4', name: 'Ancestry & Lineage', angleOffset: 3, color: '#ef4444', interface: 'p4' }, // Links to Trauma
+                { id: 'ext5', name: 'Physical Environment', angleOffset: 4, color: '#8b5cf6', interface: 'p5' }, // Links to Somatic
+                { id: 'ext6', name: 'Kinship & Intimacy', angleOffset: 5, color: '#f97316', interface: 'p6' }  // Links to Attachment
+            ],
+
+            // TIER 1 & 2 & 3: THE INTERNAL PSYCHE
             parts: [
                 { id: 'p0', name: 'The Integrated Self', x: window.innerWidth/2, y: window.innerHeight/2, vx: 0, vy: 0, color: '#ffffff', isSelf: true, satellites: [] },
-                
-                { id: 'p1', name: 'Executive Protector (PFC)', x: window.innerWidth/2, y: window.innerHeight/2 - 150, vx: 0, vy: 0, color: '#60a5fa', 
-                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] },
-                
-                { id: 'p2', name: 'Evaluative Protector (DMN)', x: window.innerWidth/2 + 130, y: window.innerHeight/2 - 75, vx: 0, vy: 0, color: '#f472b6', 
-                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] },
-                
-                { id: 'p3', name: 'Reactive Protector (Salience)', x: window.innerWidth/2 + 130, y: window.innerHeight/2 + 75, vx: 0, vy: 0, color: '#4ade80', 
-                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] },
-                
-                { id: 'p4', name: 'Trauma Carrier (Limbic)', x: window.innerWidth/2, y: window.innerHeight/2 + 150, vx: 0, vy: 0, color: '#f87171', 
-                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] },
-                
-                { id: 'p5', name: 'Somatic Engine (Insula)', x: window.innerWidth/2 - 130, y: window.innerHeight/2 + 75, vx: 0, vy: 0, color: '#a78bfa', 
-                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] },
-                
-                { id: 'p6', name: 'Attachment Engine (Mirror/Neo)', x: window.innerWidth/2 - 130, y: window.innerHeight/2 - 75, vx: 0, vy: 0, color: '#fb923c', 
-                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] }
+                { id: 'p1', name: 'Executive Protector', x: window.innerWidth/2, y: window.innerHeight/2 - 120, vx: 0, vy: 0, color: '#60a5fa', satellites: ['Cognition', 'Affect', 'Sensation', 'Impulse', 'Image', 'Relational'] },
+                { id: 'p2', name: 'Evaluative Protector', x: window.innerWidth/2 + 104, y: window.innerHeight/2 - 60, vx: 0, vy: 0, color: '#f472b6', satellites: ['Cognition', 'Affect', 'Sensation', 'Impulse', 'Image', 'Relational'] },
+                { id: 'p3', name: 'Reactive Protector', x: window.innerWidth/2 + 104, y: window.innerHeight/2 + 60, vx: 0, vy: 0, color: '#4ade80', satellites: ['Cognition', 'Affect', 'Sensation', 'Impulse', 'Image', 'Relational'] },
+                { id: 'p4', name: 'Trauma Carrier', x: window.innerWidth/2, y: window.innerHeight/2 + 120, vx: 0, vy: 0, color: '#f87171', satellites: ['Cognition', 'Affect', 'Sensation', 'Impulse', 'Image', 'Relational'] },
+                { id: 'p5', name: 'Somatic Engine', x: window.innerWidth/2 - 104, y: window.innerHeight/2 + 60, vx: 0, vy: 0, color: '#a78bfa', satellites: ['Cognition', 'Affect', 'Sensation', 'Impulse', 'Image', 'Relational'] },
+                { id: 'p6', name: 'Attachment Engine', x: window.innerWidth/2 - 104, y: window.innerHeight/2 - 60, vx: 0, vy: 0, color: '#fb923c', satellites: ['Cognition', 'Affect', 'Sensation', 'Impulse', 'Image', 'Relational'] }
             ],
             
-            // SPRING TENSIONS (Creating the Hexagon)
-            spokeDist: 220, // Widened slightly for text clarity
-            rimDist: 220,
-            orbitRadius: 75, // Pushed out to fit the clinical labels
+            // PHYSICS CONSTANTS
+            macroRadius: 320, // Distance of external world from Self
+            mesoRadius: 140,  // Distance of internal parts from Self
+            microRadius: 50,  // Distance of engrams from internal parts
+            
             springLinks: [
                 { source: 'p0', target: 'p1', type: 'spoke' }, { source: 'p0', target: 'p2', type: 'spoke' },
                 { source: 'p0', target: 'p3', type: 'spoke' }, { source: 'p0', target: 'p4', type: 'spoke' },
@@ -74,60 +65,74 @@
 
         const CosmicCanvas = () => {
             const [parts, setParts] = useState(systemData.parts);
+            const [macros, setMacros] = useState(systemData.macroSystems.map(m => ({ ...m, x: 0, y: 0, isDragging: false })));
             const [time, setTime] = useState(0);
             const requestRef = useRef();
 
             const updatePhysics = () => {
-                setTime(t => t + 0.015); 
+                setTime(t => t + 0.005); // Slower, majestic time scale
                 
+                // 1. UPDATE MACRO SYSTEMS (The External World slowly orbits)
+                setMacros(currentMacros => currentMacros.map((macro, index) => {
+                    if (macro.isDragging) return macro;
+                    const angle = time + (index * (Math.PI / 3)); // Hexagonal distribution
+                    const cx = window.innerWidth / 2;
+                    const cy = window.innerHeight / 2;
+                    // Majestic slow orbit
+                    const targetX = cx + Math.cos(angle) * systemData.macroRadius;
+                    const targetY = cy + Math.sin(angle) * systemData.macroRadius;
+                    
+                    // Smooth lerp to orbit path
+                    const dx = targetX - (macro.x || cx);
+                    const dy = targetY - (macro.y || cy);
+                    return { ...macro, x: (macro.x || cx) + dx * 0.05, y: (macro.y || cy) + dy * 0.05 };
+                }));
+
+                // 2. UPDATE INTERNAL PSYCHE
                 setParts(currentParts => {
                     return currentParts.map(part => {
                         if (part.isDragging) return part;
                         let { x, y, vx, vy } = part;
 
-                        // SPRING PHYSICS
+                        // Internal Springs (Maintaining the Psyche Hexagon)
                         systemData.springLinks.forEach(link => {
                             let other = null;
                             if (link.source === part.id) other = currentParts.find(p => p.id === link.target);
                             if (link.target === part.id) other = currentParts.find(p => p.id === link.source);
                             
                             if (other) {
-                                const dx = other.x - x; 
-                                const dy = other.y - y;
+                                const dx = other.x - x; const dy = other.y - y;
                                 const dist = Math.sqrt(dx*dx + dy*dy);
-                                const targetDist = link.type === 'spoke' ? systemData.spokeDist : systemData.rimDist;
+                                const targetDist = link.type === 'spoke' ? systemData.mesoRadius : systemData.mesoRadius;
                                 
                                 if (dist > 0) {
-                                    const diff = dist - targetDist;
-                                    const force = diff * 0.003;
-                                    vx += (dx / dist) * force;
-                                    vy += (dy / dist) * force;
+                                    const force = (dist - targetDist) * 0.005;
+                                    vx += (dx / dist) * force; vy += (dy / dist) * force;
                                 }
                             }
                         });
 
-                        // BLACK HOLE GRAVITY
-                        systemData.blackHoles.forEach(bh => {
-                            const dx = bh.x - x; const dy = bh.y - y;
-                            const dist = Math.sqrt(dx*dx + dy*dy);
-                            if (dist < bh.eventHorizon) {
-                                vx += dx * 0.08; vy += dy * 0.08; 
-                            } else if (dist < 400 && !part.isSelf) {
-                                const force = (dx * 0.8) / (dist * 0.05) * 0.0015;
-                                vx += force;
-                                vy += (dy * 0.8) / (dist * 0.05) * 0.0015;
+                        // Macro Gravity (External world pulling on internal parts)
+                        if (!part.isSelf) {
+                            // Find the macro system this part interfaces with
+                            const interfaceMacro = macros.find(m => m.interface === part.id);
+                            if (interfaceMacro && interfaceMacro.x) {
+                                const dx = interfaceMacro.x - x;
+                                const dy = interfaceMacro.y - y;
+                                // Subtle pull from the external environment
+                                vx += dx * 0.0005;
+                                vy += dy * 0.0005;
                             }
-                        });
+                        }
 
-                        // CENTER ANCHOR
+                        // Center Anchor (The Self stays mostly centered)
                         if (part.isSelf) {
                             const cx = window.innerWidth / 2;
                             const cy = window.innerHeight / 2;
-                            vx += (cx - x) * 0.05;
-                            vy += (cy - y) * 0.05;
+                            vx += (cx - x) * 0.08; vy += (cy - y) * 0.08;
                         }
 
-                        vx *= 0.92; vy *= 0.92;
+                        vx *= 0.85; vy *= 0.85; // Friction
                         return { ...part, x: x + vx, y: y + vy, vx, vy };
                     });
                 });
@@ -137,16 +142,25 @@
             useEffect(() => {
                 requestRef.current = requestAnimationFrame(updatePhysics);
                 return () => cancelAnimationFrame(requestRef.current);
-            }, []);
+            }, [macros]); // Depend on macros so closure gets fresh data
 
-            const handleDragStart = (id, e) => {
-                setParts(prev => prev.map(p => p.id === id ? { ...p, isDragging: true } : p));
-                const handleMouseMove = (ev) => setParts(prev => prev.map(p => p.id === id ? { ...p, x: ev.clientX, y: ev.clientY, vx: 0, vy: 0 } : p));
+            // Unified Drag Handler
+            const handleDragStart = (id, type, e) => {
+                if (type === 'part') setParts(prev => prev.map(p => p.id === id ? { ...p, isDragging: true } : p));
+                if (type === 'macro') setMacros(prev => prev.map(m => m.id === id ? { ...m, isDragging: true } : m));
+                
+                const handleMouseMove = (ev) => {
+                    if (type === 'part') setParts(prev => prev.map(p => p.id === id ? { ...p, x: ev.clientX, y: ev.clientY, vx: 0, vy: 0 } : p));
+                    if (type === 'macro') setMacros(prev => prev.map(m => m.id === id ? { ...m, x: ev.clientX, y: ev.clientY } : m));
+                };
+                
                 const handleMouseUp = () => {
-                    setParts(prev => prev.map(p => p.id === id ? { ...p, isDragging: false } : p));
+                    if (type === 'part') setParts(prev => prev.map(p => p.id === id ? { ...p, isDragging: false } : p));
+                    if (type === 'macro') setMacros(prev => prev.map(m => m.id === id ? { ...m, isDragging: false } : m));
                     window.removeEventListener('mousemove', handleMouseMove);
                     window.removeEventListener('mouseup', handleMouseUp);
                 };
+                
                 window.addEventListener('mousemove', handleMouseMove);
                 window.addEventListener('mouseup', handleMouseUp);
             };
@@ -156,67 +170,99 @@
                     <svg className="absolute inset-0 w-full h-full pointer-events-none">
                         <rect width="100%" height="100%" fill="#020617" />
                         
-                        {systemData.blackHoles.map(bh => (
-                            <g key={bh.id}>
-                                <circle cx={bh.x} cy={bh.y} r={bh.radius * 2} fill={`url(#grad-${bh.id})`} opacity="0.6" className="accretion-disk"/>
-                                <circle cx={bh.x} cy={bh.y} r={bh.radius} fill="black" stroke={bh.color} strokeWidth="2" />
-                                <defs><radialGradient id={`grad-${bh.id}`}><stop offset="30%" stopColor="black" /><stop offset="70%" stopColor={bh.color} /><stop offset="100%" stopColor="transparent" /></radialGradient></defs>
-                                <text x={bh.x} y={bh.y} textAnchor="middle" fill="white" fontSize="10" opacity="0.5">ATTRACTOR STATE</text>
-                            </g>
-                        ))}
+                        {/* 1. MACRO-INTERFACE TETHERS (Connecting Outside to Inside) */}
+                        {macros.map((macro, i) => {
+                            const internalPart = parts.find(p => p.id === macro.interface);
+                            if (!internalPart || !macro.x) return null;
+                            return (
+                                <g key={`tether-${i}`}>
+                                    <line x1={macro.x} y1={macro.y} x2={internalPart.x} y2={internalPart.y} 
+                                        stroke={macro.color} strokeWidth="1" strokeOpacity="0.3" strokeDasharray="10,10" />
+                                    {/* Energy flow animation effect */}
+                                    <circle cx={(macro.x + internalPart.x)/2} cy={(macro.y + internalPart.y)/2} r="2" fill={macro.color} className="animate-ping" opacity="0.5"/>
+                                </g>
+                            )
+                        })}
 
+                        {/* 2. MACRO RING (Connecting the External Systems) */}
+                        {macros.map((macro, i) => {
+                            const nextMacro = macros[(i + 1) % macros.length];
+                            if (!macro.x || !nextMacro.x) return null;
+                            return <line key={`macroring-${i}`} x1={macro.x} y1={macro.y} x2={nextMacro.x} y2={nextMacro.y} 
+                                stroke="#334155" strokeWidth="1" strokeDasharray="4,8" opacity="0.5" />;
+                        })}
+
+                        {/* 3. INTERNAL PSYCHE TETHERS */}
                         {systemData.springLinks.map((link, i) => {
                             const s = parts.find(p => p.id === link.source);
                             const t = parts.find(p => p.id === link.target);
                             if (!s || !t) return null;
                             const isSpoke = link.type === 'spoke';
-                            return <line key={`macro-${i}`} x1={s.x} y1={s.y} x2={t.x} y2={t.y} 
-                                stroke={isSpoke ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"} 
-                                strokeWidth={isSpoke ? "2" : "1"} strokeDasharray={isSpoke ? "none" : "5,5"} 
+                            return <line key={`meso-${i}`} x1={s.x} y1={s.y} x2={t.x} y2={t.y} 
+                                stroke={isSpoke ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)"} 
+                                strokeWidth={isSpoke ? "2" : "1"} strokeDasharray={isSpoke ? "none" : "3,3"} 
                             />;
                         })}
 
+                        {/* 4. MICRO ENGRAM TETHERS */}
                         {parts.map(part => {
                             if (part.isSelf) return null;
                             return part.satellites.map((_, index) => {
-                                const angle = time * 1.5 + (index * (Math.PI / 3));
-                                const sx = Math.cos(angle) * systemData.orbitRadius;
-                                const sy = Math.sin(angle) * systemData.orbitRadius;
+                                const angle = (time * 10) + (index * (Math.PI / 3));
+                                const sx = Math.cos(angle) * systemData.microRadius;
+                                const sy = Math.sin(angle) * systemData.microRadius;
                                 return <line key={`micro-${part.id}-${index}`} 
                                     x1={part.x} y1={part.y} x2={part.x + sx} y2={part.y + sy} 
-                                    stroke={part.color} strokeOpacity="0.4" strokeWidth="1" 
+                                    stroke={part.color} strokeOpacity="0.3" strokeWidth="1" 
                                 />;
                             });
                         })}
                     </svg>
 
+                    {/* RENDER MACRO NODES (The External World) */}
+                    {macros.map(macro => {
+                        if (!macro.x) return null;
+                        return (
+                            <div key={macro.id} 
+                                onMouseDown={(e) => handleDragStart(macro.id, 'macro', e)}
+                                className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing z-10"
+                                style={{ left: macro.x, top: macro.y }}
+                            >
+                                <div className="w-24 h-24 rounded-full opacity-10 blur-xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" style={{ backgroundColor: macro.color }}></div>
+                                <div className="w-6 h-6 rounded-full border-2 bg-slate-900 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" style={{ borderColor: macro.color }}></div>
+                                <div className="absolute top-6 left-1/2 -translate-x-1/2 text-xs font-bold whitespace-nowrap tracking-widest uppercase opacity-60" style={{ color: macro.color }}>
+                                    {macro.name}
+                                </div>
+                            </div>
+                        )
+                    })}
+
+                    {/* RENDER MESO/MICRO NODES (The Internal Psyche) */}
                     {parts.map(part => {
                         return (
                             <div key={part.id} 
-                                onMouseDown={(e) => handleDragStart(part.id, e)}
-                                className={`absolute transform -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing ${part.isSelf ? 'z-30' : 'z-20'}`}
+                                onMouseDown={(e) => handleDragStart(part.id, 'part', e)}
+                                className={`absolute transform -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing ${part.isSelf ? 'z-40' : 'z-30'}`}
                                 style={{ left: part.x, top: part.y }}
                             >
-                                <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.2)]
-                                     ${part.isSelf ? 'w-16 h-16 bg-white shadow-[0_0_30px_rgba(255,255,255,0.8)]' : 'w-10 h-10'}`}
+                                <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.1)]
+                                     ${part.isSelf ? 'w-16 h-16 bg-white shadow-[0_0_40px_rgba(255,255,255,0.8)]' : 'w-8 h-8'}`}
                                      style={{ backgroundColor: part.color }}>
-                                     {part.isSelf && <div className="w-full h-full flex items-center justify-center text-black font-bold text-[10px] text-center leading-tight p-1">VENTRAL VAGAL</div>}
+                                     {part.isSelf && <div className="w-full h-full flex items-center justify-center text-black font-bold text-[10px] text-center leading-tight p-1">THE ORGANISM</div>}
                                 </div>
                                 
                                 {!part.isSelf && part.satellites.map((meme, index) => {
-                                    const angle = time * 1.5 + (index * (Math.PI / 3));
-                                    const sx = Math.cos(angle) * systemData.orbitRadius;
-                                    const sy = Math.sin(angle) * systemData.orbitRadius;
+                                    const angle = (time * 10) + (index * (Math.PI / 3));
+                                    const sx = Math.cos(angle) * systemData.microRadius;
+                                    const sy = Math.sin(angle) * systemData.microRadius;
                                     
                                     return (
                                         <div key={index} 
-                                            className="absolute w-4 h-4 rounded-full border border-slate-400 z-10 flex items-center justify-center group shadow-lg"
-                                            style={{ 
-                                                top: `calc(50% + ${sy}px)`, left: `calc(50% + ${sx}px)`, transform: 'translate(-50%, -50%)', backgroundColor: '#0f172a' 
-                                            }}
+                                            className="absolute w-3 h-3 rounded-full border border-slate-500 z-10 flex items-center justify-center group shadow-lg hover:w-4 hover:h-4 transition-all"
+                                            style={{ top: `calc(50% + ${sy}px)`, left: `calc(50% + ${sx}px)`, transform: 'translate(-50%, -50%)', backgroundColor: '#0f172a' }}
                                         >
-                                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: part.color, opacity: 0.7 }}></div>
-                                            <div className="hidden group-hover:block absolute -top-6 text-[10px] bg-black text-emerald-300 font-mono px-2 py-0.5 rounded whitespace-nowrap z-50 border border-emerald-900">
+                                            <div className="w-1 h-1 rounded-full" style={{ backgroundColor: part.color }}></div>
+                                            <div className="hidden group-hover:block absolute -top-6 text-[9px] bg-slate-900 text-slate-200 font-mono px-2 py-0.5 rounded whitespace-nowrap z-50 border border-slate-700">
                                                 {meme}
                                             </div>
                                         </div>
@@ -224,7 +270,7 @@
                                 })}
 
                                 {!part.isSelf && (
-                                    <div className="absolute top-24 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-200 whitespace-nowrap bg-slate-900/80 px-2 py-1 rounded border border-slate-700">
+                                    <div className="absolute top-16 left-1/2 -translate-x-1/2 text-[10px] font-bold text-slate-200 whitespace-nowrap bg-slate-900/90 px-2 py-1 rounded border border-slate-700">
                                         {part.name}
                                     </div>
                                 )}
@@ -237,48 +283,66 @@
 
         const SchemaView = () => (
             <div className="p-8 h-full overflow-y-auto bg-slate-900">
-                <h2 className="text-xl font-bold mb-6 text-indigo-400">Clinical Architecture: IFS + Neuroscience</h2>
-                <div className="space-y-6 max-w-4xl">
+                <h2 className="text-xl font-bold mb-6 text-indigo-400">The 4-Tier Ecological Fractal</h2>
+                <div className="space-y-6 max-w-5xl">
                     <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
-                        <h3 className="text-xl font-bold text-white mb-2">Tier 1: Ventral Vagal State (The Self)</h3>
-                        <p className="text-slate-400 mb-4">Neural integration across networks. The Prefrontal Cortex effectively regulates the Amygdala without suppressing it, allowing for presence, curiosity, and calm.</p>
+                        <h3 className="text-xl font-bold text-white mb-2">Tier 0: The Relational Web (External)</h3>
+                        <p className="text-slate-400 mb-4">The massive environmental systems surrounding the organism. Culture, Family, Economy, Environment. These exert profound gravitational pull on the internal psyche.</p>
                     </div>
                     <div className="bg-slate-800 p-6 rounded-lg border border-slate-700 ml-8">
-                        <h3 className="text-lg font-bold text-indigo-400 mb-2">Tier 2: Functional Subsystems (Major Parts)</h3>
-                        <p className="text-slate-400 mb-4">The 6 universal operating systems of the brain. They include Executive control (PFC), Evaluative scanning (DMN), Reactive reward-seeking (Salience), and Somatic survival instincts.</p>
+                        <h3 className="text-lg font-bold text-indigo-400 mb-2">Tier 1: The Integrated Self (Core)</h3>
+                        <p className="text-slate-400 mb-4">The central consciousness of the organism, holding the internal system in balance while navigating the external Relational Web.</p>
                     </div>
                     <div className="bg-slate-800 p-6 rounded-lg border border-slate-700 ml-16">
-                        <h3 className="text-md font-bold text-emerald-400 mb-2">Tier 3: The Hebbian Engram (Micro)</h3>
-                        <p className="text-slate-400 mb-4">Every psychological "Part" is constructed from a neural assembly of 6 specific data channels: Cognition, Affect, Sensation, Impulse, Image/Memory, and Relational Stance.</p>
+                        <h3 className="text-md font-bold text-emerald-400 mb-2">Tier 2: Functional Subsystems (Internal Parts)</h3>
+                        <p className="text-slate-400 mb-4">The 6 universal operating systems of the brain. Notice how each internal part specifically interfaces with an external macro-system (e.g., The Executive Protector interfaces with Vocation/Economy).</p>
+                    </div>
+                    <div className="bg-slate-800 p-6 rounded-lg border border-slate-700 ml-24">
+                        <h3 className="text-sm font-bold text-amber-400 mb-2">Tier 3: The Hebbian Engram (Micro Data)</h3>
+                        <p className="text-slate-400 mb-4">The 6 fundamental data channels (Cognition, Affect, Sensation, Impulse, Image, Relational Stance) that fire within a part.</p>
                     </div>
                 </div>
             </div>
         );
 
         const MindMapView = () => (
-            <div className="p-8 h-full flex flex-col items-center justify-start overflow-auto bg-slate-900 pt-20">
-                <div className="bg-white text-black px-8 py-4 rounded-full font-bold shadow-[0_0_30px_rgba(255,255,255,0.4)] z-10 text-xl border-4 border-indigo-500 text-center leading-tight">
-                    INTEGRATED SELF <br/><span className="text-xs font-normal">(Ventral Vagal)</span>
+            <div className="p-8 h-full flex flex-col items-center justify-start overflow-auto bg-slate-900 pt-10 pb-32">
+                <div className="bg-transparent border-2 border-slate-700 text-slate-400 px-8 py-2 rounded-full font-bold mb-8 uppercase tracking-widest text-xs shadow-[0_0_40px_rgba(255,255,255,0.05)]">
+                    The Relational Web (External World)
+                </div>
+                
+                <div className="bg-white text-black px-10 py-5 rounded-full font-bold shadow-[0_0_40px_rgba(255,255,255,0.4)] z-10 text-xl border-4 border-indigo-500 text-center leading-tight">
+                    THE ORGANISM <br/><span className="text-xs font-normal">(Integrated Self)</span>
                 </div>
                 <div className="w-px h-12 bg-slate-500"></div>
-                <div className="flex gap-12 relative px-12">
+                
+                <div className="flex gap-8 relative px-8">
                     <div className="absolute top-0 left-[5%] right-[5%] h-px bg-slate-500"></div>
-                    {systemData.parts.filter(p => !p.isSelf).map(part => (
-                        <div key={part.id} className="flex flex-col items-center relative pt-6">
+                    {systemData.parts.filter(p => !p.isSelf).map(part => {
+                        const macro = systemData.macroSystems.find(m => m.interface === part.id);
+                        return (
+                        <div key={part.id} className="flex flex-col items-center relative pt-6 w-48">
                             <div className="w-px h-6 bg-slate-500 absolute top-0"></div>
-                            <div className="bg-slate-800 border-2 px-4 py-2 rounded-lg text-sm font-bold z-10 mb-6 whitespace-nowrap shadow-lg text-center" style={{ borderColor: part.color }}>
+                            
+                            {/* Macro Interface Label */}
+                            <div className="text-[9px] font-bold uppercase tracking-wider mb-2 text-center" style={{ color: macro.color }}>
+                                ↑ Interfaces with ↑<br/>{macro.name}
+                            </div>
+                            
+                            <div className="bg-slate-800 border-2 px-3 py-2 rounded-lg text-xs font-bold z-10 mb-6 text-center shadow-lg w-full" style={{ borderColor: part.color }}>
                                 {part.name}
                             </div>
-                            <div className="flex flex-col gap-3 pl-4 border-l-2 border-slate-700">
+                            
+                            <div className="flex flex-col gap-3 pl-2 border-l-2 border-slate-700 w-full">
                                 {part.satellites.map((meme, i) => (
-                                    <div key={i} className="flex items-center text-xs text-emerald-300 font-mono">
-                                        <div className="w-4 h-px bg-slate-700 mr-2"></div>
-                                        <span className="bg-slate-950 px-2 py-1 rounded border border-emerald-900/50">{meme}</span>
+                                    <div key={i} className="flex items-center text-[10px] text-emerald-300 font-mono w-full">
+                                        <div className="w-3 h-px bg-slate-700 mr-2"></div>
+                                        <span className="bg-slate-950 px-2 py-1 rounded border border-emerald-900/50 w-full truncate">{meme}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
-                    ))}
+                    )})}
                 </div>
             </div>
         );
@@ -287,10 +351,10 @@
             const [activeTab, setActiveTab] = useState('canvas');
             return (
                 <div className="flex flex-col h-screen">
-                    <div className="bg-slate-950 border-b border-slate-800 p-4 flex justify-between items-center">
+                    <div className="bg-slate-950 border-b border-slate-800 p-4 flex justify-between items-center z-50">
                         <div className="flex items-center gap-3">
-                            <span className="text-2xl">🧬</span>
-                            <h1 className="text-xl font-bold tracking-tight">Psyche-OS <span className="text-slate-500 text-sm font-normal">v5.0 Clinical Baseline</span></h1>
+                            <span className="text-2xl">👁️‍🗨️</span>
+                            <h1 className="text-xl font-bold tracking-tight">Psyche-OS <span className="text-slate-500 text-sm font-normal">v6.0 Unified Ecological Fractal</span></h1>
                         </div>
                         <div className="flex gap-2">
                             <button className={`flex items-center gap-2 tab-btn ${activeTab === 'canvas' ? 'active' : ''}`} onClick={() => setActiveTab('canvas')}>⚛️ Canvas</button>
