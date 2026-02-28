@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Unified Cosmic Psyche v4: Fractal Seed of Life</title>
+    <title>Psyche-OS v5.0: The Clinical Baseline</title>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -26,27 +26,42 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- DATA ARCHITECTURE ---
+        // --- THE CLINICAL DATA ARCHITECTURE ---
+        // This is the "Blank Slate" ready for your personal data
         const systemData = {
-            blackHoles: [{ id: 'bh1', name: 'The Void (Addiction Singularity)', x: window.innerWidth - 200, y: window.innerHeight - 200, radius: 60, color: '#1e1b4b', eventHorizon: 100 }],
-            wormholes: [{ id: 'w1', name: 'Instant Gratification', inX: 200, inY: window.innerHeight - 150, outX: window.innerWidth - 300, outY: window.innerHeight - 250, color: '#22d3ee' }],
-            memeplexes: [{ id: 'm1', name: 'Spiritual/Meaning Framework', x: 250, y: 200, color: '#fcd34d', radius: 180 }],
+            // The Environmental Physics
+            blackHoles: [{ id: 'bh1', name: 'Dopaminergic Attractor (Addiction)', x: window.innerWidth - 200, y: window.innerHeight - 200, radius: 60, color: '#1e1b4b', eventHorizon: 100 }],
+            wormholes: [{ id: 'w1', name: 'Amygdala Hijack (System 1)', inX: 200, inY: window.innerHeight - 150, outX: window.innerWidth - 300, outY: window.innerHeight - 250, color: '#22d3ee' }],
+            memeplexes: [{ id: 'm1', name: 'Early Maladaptive Schema', x: 250, y: 200, color: '#fcd34d', radius: 180 }],
             
-            // THE MACRO-SEED OF LIFE (1 Self, 6 Parts)
+            // THE MACRO-SEED OF LIFE (1 Self, 6 Functional Subsystems)
+            // Satellites are the 6 channels of a Hebbian Engram
             parts: [
-                { id: 'p0', name: 'THE SELF', x: window.innerWidth/2, y: window.innerHeight/2, vx: 0, vy: 0, color: '#ffffff', isSelf: true, satellites: [] },
-                { id: 'p1', name: 'The Manager', x: window.innerWidth/2, y: window.innerHeight/2 - 150, vx: 0, vy: 0, color: '#60a5fa', satellites: ['Scheduling Part', 'Control Part', 'Future-Casting', 'Anxiety Part', 'To-Do Lists', 'Fixing Part'] },
-                { id: 'p2', name: 'The Critic', x: window.innerWidth/2 + 130, y: window.innerHeight/2 - 75, vx: 0, vy: 0, color: '#f472b6', satellites: ['Self-Doubt Part', 'Comparison', 'Shaming Part', 'Perfectionism', 'Guilt Trip', 'Evaluation'] },
-                { id: 'p3', name: 'The Seeker', x: window.innerWidth/2 + 130, y: window.innerHeight/2 + 75, vx: 0, vy: 0, color: '#4ade80', satellites: ['Craving Part', 'Impulse Buying', 'Dopamine Hunt', 'Restlessness', 'Bargaining', 'Tunnel Vision'] },
-                { id: 'p4', name: 'The Firefighter', x: window.innerWidth/2, y: window.innerHeight/2 + 150, vx: 0, vy: 0, color: '#f87171', satellites: ['Numbing Part', 'Dissociation', 'Bingeing Part', 'Distraction', 'Escapism', 'Urgency Part'] },
-                { id: 'p5', name: 'The Exile', x: window.innerWidth/2 - 130, y: window.innerHeight/2 + 75, vx: 0, vy: 0, color: '#a78bfa', satellites: ['Fear Part', 'Worthlessness', 'Tears', 'Isolation Part', 'Flashbacks', 'Despair Part'] },
-                { id: 'p6', name: 'The Mystic', x: window.innerWidth/2 - 130, y: window.innerHeight/2 - 75, vx: 0, vy: 0, color: '#fb923c', satellites: ['Awe Part', 'Connection', 'Artistic Part', 'Meaning-Making', 'Flow State', 'Intuition Part'] }
+                { id: 'p0', name: 'The Integrated Self', x: window.innerWidth/2, y: window.innerHeight/2, vx: 0, vy: 0, color: '#ffffff', isSelf: true, satellites: [] },
+                
+                { id: 'p1', name: 'Executive Protector (PFC)', x: window.innerWidth/2, y: window.innerHeight/2 - 150, vx: 0, vy: 0, color: '#60a5fa', 
+                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] },
+                
+                { id: 'p2', name: 'Evaluative Protector (DMN)', x: window.innerWidth/2 + 130, y: window.innerHeight/2 - 75, vx: 0, vy: 0, color: '#f472b6', 
+                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] },
+                
+                { id: 'p3', name: 'Reactive Protector (Salience)', x: window.innerWidth/2 + 130, y: window.innerHeight/2 + 75, vx: 0, vy: 0, color: '#4ade80', 
+                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] },
+                
+                { id: 'p4', name: 'Trauma Carrier (Limbic)', x: window.innerWidth/2, y: window.innerHeight/2 + 150, vx: 0, vy: 0, color: '#f87171', 
+                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] },
+                
+                { id: 'p5', name: 'Somatic Engine (Insula)', x: window.innerWidth/2 - 130, y: window.innerHeight/2 + 75, vx: 0, vy: 0, color: '#a78bfa', 
+                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] },
+                
+                { id: 'p6', name: 'Attachment Engine (Mirror/Neo)', x: window.innerWidth/2 - 130, y: window.innerHeight/2 - 75, vx: 0, vy: 0, color: '#fb923c', 
+                  satellites: ['Cognition: [Belief]', 'Affect: [Emotion]', 'Sensation: [Body]', 'Impulse: [Urge]', 'Image: [Memory]', 'Relational: [Stance]'] }
             ],
             
             // SPRING TENSIONS (Creating the Hexagon)
-            spokeDist: 180,
-            rimDist: 180,
-            orbitRadius: 55, // Distance of the 6 sub-parts from their parent Part
+            spokeDist: 220, // Widened slightly for text clarity
+            rimDist: 220,
+            orbitRadius: 75, // Pushed out to fit the clinical labels
             springLinks: [
                 { source: 'p0', target: 'p1', type: 'spoke' }, { source: 'p0', target: 'p2', type: 'spoke' },
                 { source: 'p0', target: 'p3', type: 'spoke' }, { source: 'p0', target: 'p4', type: 'spoke' },
@@ -63,14 +78,14 @@
             const requestRef = useRef();
 
             const updatePhysics = () => {
-                setTime(t => t + 0.015); // Slightly slower orbit for visual elegance
+                setTime(t => t + 0.015); 
                 
                 setParts(currentParts => {
                     return currentParts.map(part => {
                         if (part.isDragging) return part;
                         let { x, y, vx, vy } = part;
 
-                        // 1. SPRING PHYSICS
+                        // SPRING PHYSICS
                         systemData.springLinks.forEach(link => {
                             let other = null;
                             if (link.source === part.id) other = currentParts.find(p => p.id === link.target);
@@ -91,7 +106,7 @@
                             }
                         });
 
-                        // 2. BLACK HOLE GRAVITY
+                        // BLACK HOLE GRAVITY
                         systemData.blackHoles.forEach(bh => {
                             const dx = bh.x - x; const dy = bh.y - y;
                             const dist = Math.sqrt(dx*dx + dy*dy);
@@ -104,7 +119,7 @@
                             }
                         });
 
-                        // 3. CENTER ANCHOR
+                        // CENTER ANCHOR
                         if (part.isSelf) {
                             const cx = window.innerWidth / 2;
                             const cy = window.innerHeight / 2;
@@ -141,17 +156,15 @@
                     <svg className="absolute inset-0 w-full h-full pointer-events-none">
                         <rect width="100%" height="100%" fill="#020617" />
                         
-                        {/* Black Holes & Wormholes */}
                         {systemData.blackHoles.map(bh => (
                             <g key={bh.id}>
                                 <circle cx={bh.x} cy={bh.y} r={bh.radius * 2} fill={`url(#grad-${bh.id})`} opacity="0.6" className="accretion-disk"/>
                                 <circle cx={bh.x} cy={bh.y} r={bh.radius} fill="black" stroke={bh.color} strokeWidth="2" />
                                 <defs><radialGradient id={`grad-${bh.id}`}><stop offset="30%" stopColor="black" /><stop offset="70%" stopColor={bh.color} /><stop offset="100%" stopColor="transparent" /></radialGradient></defs>
-                                <text x={bh.x} y={bh.y} textAnchor="middle" fill="white" fontSize="10" opacity="0.5">THE VOID</text>
+                                <text x={bh.x} y={bh.y} textAnchor="middle" fill="white" fontSize="10" opacity="0.5">ATTRACTOR STATE</text>
                             </g>
                         ))}
 
-                        {/* Macro-Spokes (Self to Parts & Part to Part) */}
                         {systemData.springLinks.map((link, i) => {
                             const s = parts.find(p => p.id === link.source);
                             const t = parts.find(p => p.id === link.target);
@@ -159,12 +172,10 @@
                             const isSpoke = link.type === 'spoke';
                             return <line key={`macro-${i}`} x1={s.x} y1={s.y} x2={t.x} y2={t.y} 
                                 stroke={isSpoke ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"} 
-                                strokeWidth={isSpoke ? "2" : "1"} 
-                                strokeDasharray={isSpoke ? "none" : "5,5"} 
+                                strokeWidth={isSpoke ? "2" : "1"} strokeDasharray={isSpoke ? "none" : "5,5"} 
                             />;
                         })}
 
-                        {/* Micro-Spokes (Part to Sub-parts) */}
                         {parts.map(part => {
                             if (part.isSelf) return null;
                             return part.satellites.map((_, index) => {
@@ -172,17 +183,13 @@
                                 const sx = Math.cos(angle) * systemData.orbitRadius;
                                 const sy = Math.sin(angle) * systemData.orbitRadius;
                                 return <line key={`micro-${part.id}-${index}`} 
-                                    x1={part.x} y1={part.y} 
-                                    x2={part.x + sx} y2={part.y + sy} 
-                                    stroke={part.color} 
-                                    strokeOpacity="0.4" 
-                                    strokeWidth="1" 
+                                    x1={part.x} y1={part.y} x2={part.x + sx} y2={part.y + sy} 
+                                    stroke={part.color} strokeOpacity="0.4" strokeWidth="1" 
                                 />;
                             });
                         })}
                     </svg>
 
-                    {/* Nodes (Parts & Self) */}
                     {parts.map(part => {
                         return (
                             <div key={part.id} 
@@ -190,14 +197,12 @@
                                 className={`absolute transform -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing ${part.isSelf ? 'z-30' : 'z-20'}`}
                                 style={{ left: part.x, top: part.y }}
                             >
-                                {/* Core Nucleus */}
                                 <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.2)]
                                      ${part.isSelf ? 'w-16 h-16 bg-white shadow-[0_0_30px_rgba(255,255,255,0.8)]' : 'w-10 h-10'}`}
                                      style={{ backgroundColor: part.color }}>
-                                     {part.isSelf && <div className="w-full h-full flex items-center justify-center text-black font-bold text-xs">SELF</div>}
+                                     {part.isSelf && <div className="w-full h-full flex items-center justify-center text-black font-bold text-[10px] text-center leading-tight p-1">VENTRAL VAGAL</div>}
                                 </div>
                                 
-                                {/* Orbiting Sub-Parts (Level 2 Nodes) */}
                                 {!part.isSelf && part.satellites.map((meme, index) => {
                                     const angle = time * 1.5 + (index * (Math.PI / 3));
                                     const sx = Math.cos(angle) * systemData.orbitRadius;
@@ -207,14 +212,11 @@
                                         <div key={index} 
                                             className="absolute w-4 h-4 rounded-full border border-slate-400 z-10 flex items-center justify-center group shadow-lg"
                                             style={{ 
-                                                top: `calc(50% + ${sy}px)`, 
-                                                left: `calc(50% + ${sx}px)`, 
-                                                transform: 'translate(-50%, -50%)',
-                                                backgroundColor: '#0f172a' // Darker center to look like a true node
+                                                top: `calc(50% + ${sy}px)`, left: `calc(50% + ${sx}px)`, transform: 'translate(-50%, -50%)', backgroundColor: '#0f172a' 
                                             }}
                                         >
                                             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: part.color, opacity: 0.7 }}></div>
-                                            <div className="hidden group-hover:block absolute -top-6 text-[10px] bg-black text-white px-2 py-0.5 rounded whitespace-nowrap z-50">
+                                            <div className="hidden group-hover:block absolute -top-6 text-[10px] bg-black text-emerald-300 font-mono px-2 py-0.5 rounded whitespace-nowrap z-50 border border-emerald-900">
                                                 {meme}
                                             </div>
                                         </div>
@@ -235,19 +237,19 @@
 
         const SchemaView = () => (
             <div className="p-8 h-full overflow-y-auto bg-slate-900">
-                <h2 className="text-xl font-bold mb-6 text-indigo-400">The Fractal Architecture: 3-Tier Seed of Life</h2>
+                <h2 className="text-xl font-bold mb-6 text-indigo-400">Clinical Architecture: IFS + Neuroscience</h2>
                 <div className="space-y-6 max-w-4xl">
                     <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
-                        <h3 className="text-xl font-bold text-white mb-2">Tier 1: The Central Sun (Self)</h3>
-                        <p className="text-slate-400 mb-4">Pure consciousness. It acts as the anchor holding the entire network in balance.</p>
+                        <h3 className="text-xl font-bold text-white mb-2">Tier 1: Ventral Vagal State (The Self)</h3>
+                        <p className="text-slate-400 mb-4">Neural integration across networks. The Prefrontal Cortex effectively regulates the Amygdala without suppressing it, allowing for presence, curiosity, and calm.</p>
                     </div>
                     <div className="bg-slate-800 p-6 rounded-lg border border-slate-700 ml-8">
-                        <h3 className="text-lg font-bold text-indigo-400 mb-2">Tier 2: The 6 Planets (Major Parts)</h3>
-                        <p className="text-slate-400 mb-4">Orbiting the Self are the 6 primary subpersonalities (Manager, Firefighter, etc.). They form the primary hexagram.</p>
+                        <h3 className="text-lg font-bold text-indigo-400 mb-2">Tier 2: Functional Subsystems (Major Parts)</h3>
+                        <p className="text-slate-400 mb-4">The 6 universal operating systems of the brain. They include Executive control (PFC), Evaluative scanning (DMN), Reactive reward-seeking (Salience), and Somatic survival instincts.</p>
                     </div>
                     <div className="bg-slate-800 p-6 rounded-lg border border-slate-700 ml-16">
-                        <h3 className="text-md font-bold text-emerald-400 mb-2">Tier 3: The 36 Moons (Sub-Parts / Memes)</h3>
-                        <p className="text-slate-400 mb-4">Zooming in, every Major Part is supported by its own hexagram of 6 sub-parts. "Parts having parts" is the engine of the psyche.</p>
+                        <h3 className="text-md font-bold text-emerald-400 mb-2">Tier 3: The Hebbian Engram (Micro)</h3>
+                        <p className="text-slate-400 mb-4">Every psychological "Part" is constructed from a neural assembly of 6 specific data channels: Cognition, Affect, Sensation, Impulse, Image/Memory, and Relational Stance.</p>
                     </div>
                 </div>
             </div>
@@ -255,8 +257,8 @@
 
         const MindMapView = () => (
             <div className="p-8 h-full flex flex-col items-center justify-start overflow-auto bg-slate-900 pt-20">
-                <div className="bg-white text-black px-8 py-4 rounded-full font-bold shadow-[0_0_30px_rgba(255,255,255,0.4)] z-10 text-xl border-4 border-indigo-500">
-                    THE SELF
+                <div className="bg-white text-black px-8 py-4 rounded-full font-bold shadow-[0_0_30px_rgba(255,255,255,0.4)] z-10 text-xl border-4 border-indigo-500 text-center leading-tight">
+                    INTEGRATED SELF <br/><span className="text-xs font-normal">(Ventral Vagal)</span>
                 </div>
                 <div className="w-px h-12 bg-slate-500"></div>
                 <div className="flex gap-12 relative px-12">
@@ -264,14 +266,14 @@
                     {systemData.parts.filter(p => !p.isSelf).map(part => (
                         <div key={part.id} className="flex flex-col items-center relative pt-6">
                             <div className="w-px h-6 bg-slate-500 absolute top-0"></div>
-                            <div className="bg-slate-800 border-2 px-4 py-2 rounded-lg text-sm font-bold z-10 mb-6 whitespace-nowrap shadow-lg" style={{ borderColor: part.color }}>
+                            <div className="bg-slate-800 border-2 px-4 py-2 rounded-lg text-sm font-bold z-10 mb-6 whitespace-nowrap shadow-lg text-center" style={{ borderColor: part.color }}>
                                 {part.name}
                             </div>
                             <div className="flex flex-col gap-3 pl-4 border-l-2 border-slate-700">
                                 {part.satellites.map((meme, i) => (
-                                    <div key={i} className="flex items-center text-xs text-slate-300">
+                                    <div key={i} className="flex items-center text-xs text-emerald-300 font-mono">
                                         <div className="w-4 h-px bg-slate-700 mr-2"></div>
-                                        <span className="bg-slate-950 px-2 py-1 rounded border border-slate-800">{meme}</span>
+                                        <span className="bg-slate-950 px-2 py-1 rounded border border-emerald-900/50">{meme}</span>
                                     </div>
                                 ))}
                             </div>
@@ -287,8 +289,8 @@
                 <div className="flex flex-col h-screen">
                     <div className="bg-slate-950 border-b border-slate-800 p-4 flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                            <span className="text-2xl">💮</span>
-                            <h1 className="text-xl font-bold tracking-tight">Psyche-OS <span className="text-slate-500 text-sm font-normal">v4.0 True Fractal</span></h1>
+                            <span className="text-2xl">🧬</span>
+                            <h1 className="text-xl font-bold tracking-tight">Psyche-OS <span className="text-slate-500 text-sm font-normal">v5.0 Clinical Baseline</span></h1>
                         </div>
                         <div className="flex gap-2">
                             <button className={`flex items-center gap-2 tab-btn ${activeTab === 'canvas' ? 'active' : ''}`} onClick={() => setActiveTab('canvas')}>⚛️ Canvas</button>
