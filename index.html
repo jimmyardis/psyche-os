@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Unified Cosmic Psyche v3: The Macro-Fractal</title>
+    <title>The Unified Cosmic Psyche v4: Fractal Seed of Life</title>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -35,5 +35,278 @@
             // THE MACRO-SEED OF LIFE (1 Self, 6 Parts)
             parts: [
                 { id: 'p0', name: 'THE SELF', x: window.innerWidth/2, y: window.innerHeight/2, vx: 0, vy: 0, color: '#ffffff', isSelf: true, satellites: [] },
-                { id: 'p1', name: 'The Manager', x: window.innerWidth/2, y: window.innerHeight/2 - 150, vx: 0, vy: 0, color: '#60a5fa', satellites: ['Scheduling', 'Controlling', 'Future-Casting', 'Anxiety Spike', 'To-Do Lists', 'Fixing'] },
-                { id: 'p2', name: 'The Critic
+                { id: 'p1', name: 'The Manager', x: window.innerWidth/2, y: window.innerHeight/2 - 150, vx: 0, vy: 0, color: '#60a5fa', satellites: ['Scheduling Part', 'Control Part', 'Future-Casting', 'Anxiety Part', 'To-Do Lists', 'Fixing Part'] },
+                { id: 'p2', name: 'The Critic', x: window.innerWidth/2 + 130, y: window.innerHeight/2 - 75, vx: 0, vy: 0, color: '#f472b6', satellites: ['Self-Doubt Part', 'Comparison', 'Shaming Part', 'Perfectionism', 'Guilt Trip', 'Evaluation'] },
+                { id: 'p3', name: 'The Seeker', x: window.innerWidth/2 + 130, y: window.innerHeight/2 + 75, vx: 0, vy: 0, color: '#4ade80', satellites: ['Craving Part', 'Impulse Buying', 'Dopamine Hunt', 'Restlessness', 'Bargaining', 'Tunnel Vision'] },
+                { id: 'p4', name: 'The Firefighter', x: window.innerWidth/2, y: window.innerHeight/2 + 150, vx: 0, vy: 0, color: '#f87171', satellites: ['Numbing Part', 'Dissociation', 'Bingeing Part', 'Distraction', 'Escapism', 'Urgency Part'] },
+                { id: 'p5', name: 'The Exile', x: window.innerWidth/2 - 130, y: window.innerHeight/2 + 75, vx: 0, vy: 0, color: '#a78bfa', satellites: ['Fear Part', 'Worthlessness', 'Tears', 'Isolation Part', 'Flashbacks', 'Despair Part'] },
+                { id: 'p6', name: 'The Mystic', x: window.innerWidth/2 - 130, y: window.innerHeight/2 - 75, vx: 0, vy: 0, color: '#fb923c', satellites: ['Awe Part', 'Connection', 'Artistic Part', 'Meaning-Making', 'Flow State', 'Intuition Part'] }
+            ],
+            
+            // SPRING TENSIONS (Creating the Hexagon)
+            spokeDist: 180,
+            rimDist: 180,
+            orbitRadius: 55, // Distance of the 6 sub-parts from their parent Part
+            springLinks: [
+                { source: 'p0', target: 'p1', type: 'spoke' }, { source: 'p0', target: 'p2', type: 'spoke' },
+                { source: 'p0', target: 'p3', type: 'spoke' }, { source: 'p0', target: 'p4', type: 'spoke' },
+                { source: 'p0', target: 'p5', type: 'spoke' }, { source: 'p0', target: 'p6', type: 'spoke' },
+                { source: 'p1', target: 'p2', type: 'rim' }, { source: 'p2', target: 'p3', type: 'rim' },
+                { source: 'p3', target: 'p4', type: 'rim' }, { source: 'p4', target: 'p5', type: 'rim' },
+                { source: 'p5', target: 'p6', type: 'rim' }, { source: 'p6', target: 'p1', type: 'rim' }
+            ]
+        };
+
+        const CosmicCanvas = () => {
+            const [parts, setParts] = useState(systemData.parts);
+            const [time, setTime] = useState(0);
+            const requestRef = useRef();
+
+            const updatePhysics = () => {
+                setTime(t => t + 0.015); // Slightly slower orbit for visual elegance
+                
+                setParts(currentParts => {
+                    return currentParts.map(part => {
+                        if (part.isDragging) return part;
+                        let { x, y, vx, vy } = part;
+
+                        // 1. SPRING PHYSICS
+                        systemData.springLinks.forEach(link => {
+                            let other = null;
+                            if (link.source === part.id) other = currentParts.find(p => p.id === link.target);
+                            if (link.target === part.id) other = currentParts.find(p => p.id === link.source);
+                            
+                            if (other) {
+                                const dx = other.x - x; 
+                                const dy = other.y - y;
+                                const dist = Math.sqrt(dx*dx + dy*dy);
+                                const targetDist = link.type === 'spoke' ? systemData.spokeDist : systemData.rimDist;
+                                
+                                if (dist > 0) {
+                                    const diff = dist - targetDist;
+                                    const force = diff * 0.003;
+                                    vx += (dx / dist) * force;
+                                    vy += (dy / dist) * force;
+                                }
+                            }
+                        });
+
+                        // 2. BLACK HOLE GRAVITY
+                        systemData.blackHoles.forEach(bh => {
+                            const dx = bh.x - x; const dy = bh.y - y;
+                            const dist = Math.sqrt(dx*dx + dy*dy);
+                            if (dist < bh.eventHorizon) {
+                                vx += dx * 0.08; vy += dy * 0.08; 
+                            } else if (dist < 400 && !part.isSelf) {
+                                const force = (dx * 0.8) / (dist * 0.05) * 0.0015;
+                                vx += force;
+                                vy += (dy * 0.8) / (dist * 0.05) * 0.0015;
+                            }
+                        });
+
+                        // 3. CENTER ANCHOR
+                        if (part.isSelf) {
+                            const cx = window.innerWidth / 2;
+                            const cy = window.innerHeight / 2;
+                            vx += (cx - x) * 0.05;
+                            vy += (cy - y) * 0.05;
+                        }
+
+                        vx *= 0.92; vy *= 0.92;
+                        return { ...part, x: x + vx, y: y + vy, vx, vy };
+                    });
+                });
+                requestRef.current = requestAnimationFrame(updatePhysics);
+            };
+
+            useEffect(() => {
+                requestRef.current = requestAnimationFrame(updatePhysics);
+                return () => cancelAnimationFrame(requestRef.current);
+            }, []);
+
+            const handleDragStart = (id, e) => {
+                setParts(prev => prev.map(p => p.id === id ? { ...p, isDragging: true } : p));
+                const handleMouseMove = (ev) => setParts(prev => prev.map(p => p.id === id ? { ...p, x: ev.clientX, y: ev.clientY, vx: 0, vy: 0 } : p));
+                const handleMouseUp = () => {
+                    setParts(prev => prev.map(p => p.id === id ? { ...p, isDragging: false } : p));
+                    window.removeEventListener('mousemove', handleMouseMove);
+                    window.removeEventListener('mouseup', handleMouseUp);
+                };
+                window.addEventListener('mousemove', handleMouseMove);
+                window.addEventListener('mouseup', handleMouseUp);
+            };
+
+            return (
+                <div className="relative w-full h-full overflow-hidden select-none">
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                        <rect width="100%" height="100%" fill="#020617" />
+                        
+                        {/* Black Holes & Wormholes */}
+                        {systemData.blackHoles.map(bh => (
+                            <g key={bh.id}>
+                                <circle cx={bh.x} cy={bh.y} r={bh.radius * 2} fill={`url(#grad-${bh.id})`} opacity="0.6" className="accretion-disk"/>
+                                <circle cx={bh.x} cy={bh.y} r={bh.radius} fill="black" stroke={bh.color} strokeWidth="2" />
+                                <defs><radialGradient id={`grad-${bh.id}`}><stop offset="30%" stopColor="black" /><stop offset="70%" stopColor={bh.color} /><stop offset="100%" stopColor="transparent" /></radialGradient></defs>
+                                <text x={bh.x} y={bh.y} textAnchor="middle" fill="white" fontSize="10" opacity="0.5">THE VOID</text>
+                            </g>
+                        ))}
+
+                        {/* Macro-Spokes (Self to Parts & Part to Part) */}
+                        {systemData.springLinks.map((link, i) => {
+                            const s = parts.find(p => p.id === link.source);
+                            const t = parts.find(p => p.id === link.target);
+                            if (!s || !t) return null;
+                            const isSpoke = link.type === 'spoke';
+                            return <line key={`macro-${i}`} x1={s.x} y1={s.y} x2={t.x} y2={t.y} 
+                                stroke={isSpoke ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"} 
+                                strokeWidth={isSpoke ? "2" : "1"} 
+                                strokeDasharray={isSpoke ? "none" : "5,5"} 
+                            />;
+                        })}
+
+                        {/* Micro-Spokes (Part to Sub-parts) */}
+                        {parts.map(part => {
+                            if (part.isSelf) return null;
+                            return part.satellites.map((_, index) => {
+                                const angle = time * 1.5 + (index * (Math.PI / 3));
+                                const sx = Math.cos(angle) * systemData.orbitRadius;
+                                const sy = Math.sin(angle) * systemData.orbitRadius;
+                                return <line key={`micro-${part.id}-${index}`} 
+                                    x1={part.x} y1={part.y} 
+                                    x2={part.x + sx} y2={part.y + sy} 
+                                    stroke={part.color} 
+                                    strokeOpacity="0.4" 
+                                    strokeWidth="1" 
+                                />;
+                            });
+                        })}
+                    </svg>
+
+                    {/* Nodes (Parts & Self) */}
+                    {parts.map(part => {
+                        return (
+                            <div key={part.id} 
+                                onMouseDown={(e) => handleDragStart(part.id, e)}
+                                className={`absolute transform -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing ${part.isSelf ? 'z-30' : 'z-20'}`}
+                                style={{ left: part.x, top: part.y }}
+                            >
+                                {/* Core Nucleus */}
+                                <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.2)]
+                                     ${part.isSelf ? 'w-16 h-16 bg-white shadow-[0_0_30px_rgba(255,255,255,0.8)]' : 'w-10 h-10'}`}
+                                     style={{ backgroundColor: part.color }}>
+                                     {part.isSelf && <div className="w-full h-full flex items-center justify-center text-black font-bold text-xs">SELF</div>}
+                                </div>
+                                
+                                {/* Orbiting Sub-Parts (Level 2 Nodes) */}
+                                {!part.isSelf && part.satellites.map((meme, index) => {
+                                    const angle = time * 1.5 + (index * (Math.PI / 3));
+                                    const sx = Math.cos(angle) * systemData.orbitRadius;
+                                    const sy = Math.sin(angle) * systemData.orbitRadius;
+                                    
+                                    return (
+                                        <div key={index} 
+                                            className="absolute w-4 h-4 rounded-full border border-slate-400 z-10 flex items-center justify-center group shadow-lg"
+                                            style={{ 
+                                                top: `calc(50% + ${sy}px)`, 
+                                                left: `calc(50% + ${sx}px)`, 
+                                                transform: 'translate(-50%, -50%)',
+                                                backgroundColor: '#0f172a' // Darker center to look like a true node
+                                            }}
+                                        >
+                                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: part.color, opacity: 0.7 }}></div>
+                                            <div className="hidden group-hover:block absolute -top-6 text-[10px] bg-black text-white px-2 py-0.5 rounded whitespace-nowrap z-50">
+                                                {meme}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+
+                                {!part.isSelf && (
+                                    <div className="absolute top-24 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-200 whitespace-nowrap bg-slate-900/80 px-2 py-1 rounded border border-slate-700">
+                                        {part.name}
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    })}
+                </div>
+            );
+        };
+
+        const SchemaView = () => (
+            <div className="p-8 h-full overflow-y-auto bg-slate-900">
+                <h2 className="text-xl font-bold mb-6 text-indigo-400">The Fractal Architecture: 3-Tier Seed of Life</h2>
+                <div className="space-y-6 max-w-4xl">
+                    <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
+                        <h3 className="text-xl font-bold text-white mb-2">Tier 1: The Central Sun (Self)</h3>
+                        <p className="text-slate-400 mb-4">Pure consciousness. It acts as the anchor holding the entire network in balance.</p>
+                    </div>
+                    <div className="bg-slate-800 p-6 rounded-lg border border-slate-700 ml-8">
+                        <h3 className="text-lg font-bold text-indigo-400 mb-2">Tier 2: The 6 Planets (Major Parts)</h3>
+                        <p className="text-slate-400 mb-4">Orbiting the Self are the 6 primary subpersonalities (Manager, Firefighter, etc.). They form the primary hexagram.</p>
+                    </div>
+                    <div className="bg-slate-800 p-6 rounded-lg border border-slate-700 ml-16">
+                        <h3 className="text-md font-bold text-emerald-400 mb-2">Tier 3: The 36 Moons (Sub-Parts / Memes)</h3>
+                        <p className="text-slate-400 mb-4">Zooming in, every Major Part is supported by its own hexagram of 6 sub-parts. "Parts having parts" is the engine of the psyche.</p>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const MindMapView = () => (
+            <div className="p-8 h-full flex flex-col items-center justify-start overflow-auto bg-slate-900 pt-20">
+                <div className="bg-white text-black px-8 py-4 rounded-full font-bold shadow-[0_0_30px_rgba(255,255,255,0.4)] z-10 text-xl border-4 border-indigo-500">
+                    THE SELF
+                </div>
+                <div className="w-px h-12 bg-slate-500"></div>
+                <div className="flex gap-12 relative px-12">
+                    <div className="absolute top-0 left-[5%] right-[5%] h-px bg-slate-500"></div>
+                    {systemData.parts.filter(p => !p.isSelf).map(part => (
+                        <div key={part.id} className="flex flex-col items-center relative pt-6">
+                            <div className="w-px h-6 bg-slate-500 absolute top-0"></div>
+                            <div className="bg-slate-800 border-2 px-4 py-2 rounded-lg text-sm font-bold z-10 mb-6 whitespace-nowrap shadow-lg" style={{ borderColor: part.color }}>
+                                {part.name}
+                            </div>
+                            <div className="flex flex-col gap-3 pl-4 border-l-2 border-slate-700">
+                                {part.satellites.map((meme, i) => (
+                                    <div key={i} className="flex items-center text-xs text-slate-300">
+                                        <div className="w-4 h-px bg-slate-700 mr-2"></div>
+                                        <span className="bg-slate-950 px-2 py-1 rounded border border-slate-800">{meme}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('canvas');
+            return (
+                <div className="flex flex-col h-screen">
+                    <div className="bg-slate-950 border-b border-slate-800 p-4 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <span className="text-2xl">💮</span>
+                            <h1 className="text-xl font-bold tracking-tight">Psyche-OS <span className="text-slate-500 text-sm font-normal">v4.0 True Fractal</span></h1>
+                        </div>
+                        <div className="flex gap-2">
+                            <button className={`flex items-center gap-2 tab-btn ${activeTab === 'canvas' ? 'active' : ''}`} onClick={() => setActiveTab('canvas')}>⚛️ Canvas</button>
+                            <button className={`flex items-center gap-2 tab-btn ${activeTab === 'schema' ? 'active' : ''}`} onClick={() => setActiveTab('schema')}>🗄️ Schema</button>
+                            <button className={`flex items-center gap-2 tab-btn ${activeTab === 'mindmap' ? 'active' : ''}`} onClick={() => setActiveTab('mindmap')}>🧠 Hierarchy</button>
+                        </div>
+                    </div>
+                    <div className="flex-1 relative">
+                        {activeTab === 'canvas' && <CosmicCanvas />}
+                        {activeTab === 'schema' && <SchemaView />}
+                        {activeTab === 'mindmap' && <MindMapView />}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
